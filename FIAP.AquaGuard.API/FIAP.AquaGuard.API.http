@@ -1,0 +1,6 @@
+@FIAP.AquaGuard.API_HostAddress = http://localhost:5007
+
+GET {{FIAP.AquaGuard.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
