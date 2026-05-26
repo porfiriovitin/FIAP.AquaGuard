@@ -7,11 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="BCrypt.Net-Next" Version="4.2.0" />
     <PackageReference Include="FluentValidation" Version="11.8.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.4" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FIAP.AquaGuard.Communication\FIAP.AquaGuard.Communication.csproj" />
     <ProjectReference Include="..\FIAP.AquaGuard.Domain\FIAP.AquaGuard.Domain.csproj" />
     <ProjectReference Include="..\FIAP.AquaGuard.Exception\FIAP.AquaGuard.Exception.csproj" />
   </ItemGroup>

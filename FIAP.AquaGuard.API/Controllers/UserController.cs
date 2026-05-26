@@ -1,22 +1,26 @@
-﻿using FIAP.Aquaguard.Application.UseCases.User.Register;
-using FIAP.AquaGuard.Communication.Requests;
-using FIAP.AquaGuard.Communication.Responses;
+﻿using FIAP.AquaGuard.Application.Features.Auth.Register;
+using FIAP.AquaGuard.API.Models;
 using Microsoft.AspNetCore.Mvc;
-using Superpower.Model;
 
 namespace FIAP.AquaGuard.API.Controllers;
 
-[Route("~/api/users")]
+[Route("api/users")]
 [ApiController]
-public class UserController : Controller
+public class UserController : ControllerBase
 {
-    [HttpPost]
-    [Route("~/register")]
-    public IActionResult Register([FromBody] RequestRegisterUser request)
-    {
-        var useCase = new RegisterUserAccountUseCase();
+    private readonly RegisterUserAccountUseCase _useCase;
 
-        PayloadResponse<ResponseRegisteredUserJson> result = useCase.Execute(request);
+    public UserController(RegisterUserAccountUseCase useCase)
+    {
+        _useCase = useCase;
+    }
+
+    [HttpPost("register")]
+    [ProducesResponseType(typeof(PayloadResponse<ResponseRegisteredUser>), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(PayloadResponse<object>), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> Register([FromBody] RequestRegisterUser request)
+    {
+        PayloadResponse<ResponseRegisteredUser> result = await _useCase.ExecuteAsync(request);
 
         return StatusCode(StatusCodes.Status201Created, result);
     }

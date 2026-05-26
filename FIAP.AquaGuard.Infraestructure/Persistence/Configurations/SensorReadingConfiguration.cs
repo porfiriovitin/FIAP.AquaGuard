@@ -2,7 +2,7 @@ using FIAP.AquaGuard.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace FIAP.AquaGuard.Infraestructure.Persistence.Configurations;
+namespace FIAP.AquaGuard.Infrastructure.Persistence.Configurations;
 
 public class SensorReadingConfiguration : IEntityTypeConfiguration<SensorReading>
 {

@@ -1,5 +1,5 @@
-﻿using FIAP.AquaGuard.Communication.Enums;
-using FIAP.AquaGuard.Communication.Responses;
+﻿using FIAP.AquaGuard.Application.Shared.Responses;
+using FIAP.AquaGuard.API.Models;
 using FIAP.AquaGuard.Exception;
 using FIAP.AquaGuard.Exception.ExceptionsBase;
 using Microsoft.AspNetCore.Mvc;

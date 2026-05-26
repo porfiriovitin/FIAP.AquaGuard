@@ -1,6 +1,7 @@
 using DotNetEnv;
 using FIAP.AquaGuard.API.Filters;
-using FIAP.AquaGuard.Infraestructure;
+using FIAP.AquaGuard.Application;
+using FIAP.AquaGuard.Infrastructure;
 using Microsoft.AspNetCore.Localization;
 using Scalar.AspNetCore;
 using System.Globalization;
@@ -13,7 +14,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
-builder.Services.AddInfrastructure();
+builder.Services.AddApplication();
+builder.Services.AddInfrastructure(builder.Configuration);
 
 /// :: Configure localization for using bilingual messages.
 builder.Services.Configure<RequestLocalizationOptions>(options =>

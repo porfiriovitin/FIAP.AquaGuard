@@ -2,13 +2,13 @@ using FIAP.AquaGuard.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace FIAP.AquaGuard.Infraestructure.Persistence.Configurations;
+namespace FIAP.AquaGuard.Infrastructure.Persistence.Configurations;
 
 public class UserConfiguration : IEntityTypeConfiguration<User>
 {
     public void Configure(EntityTypeBuilder<User> builder)
     {
-        builder.ToTable("users");
+        builder.ToTable("app_users");
 
         builder.HasKey(x => x.Id);
 

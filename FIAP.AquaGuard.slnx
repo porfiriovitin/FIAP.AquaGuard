@@ -9,10 +9,9 @@
     <Project Path="FIAP.AquaGuard.API/FIAP.AquaGuard.API.csproj" />
     <Project Path="FIAP.Aquaguard.Application/FIAP.Aquaguard.Application.csproj" />
     <Project Path="FIAP.AquaGuard.Domain/FIAP.AquaGuard.Domain.csproj" />
-    <Project Path="FIAP.AquaGuard.Infraestructure/FIAP.AquaGuard.Infraestructure.csproj" />
+    <Project Path="FIAP.AquaGuard.Infraestructure/FIAP.AquaGuard.Infrastructure.csproj" />
   </Folder>
   <Folder Name="/src/Shared/">
-    <Project Path="FIAP.AquaGuard.Communication/FIAP.AquaGuard.Communication.csproj" />
     <Project Path="FIAP.AquaGuard.Exception/FIAP.AquaGuard.Exception.csproj" />
   </Folder>
   <Folder Name="/tests/" />
