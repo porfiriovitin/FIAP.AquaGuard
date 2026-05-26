@@ -13,8 +13,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Shared\FIAP.AquaGuard.Exception\FIAP.AquaGuard.Exception.csproj" />
     <ProjectReference Include="..\FIAP.AquaGuard.Domain\FIAP.AquaGuard.Domain.csproj" />
-    <ProjectReference Include="..\FIAP.AquaGuard.Exception\FIAP.AquaGuard.Exception.csproj" />
+    <ProjectReference Include="..\FIAP.AquaGuard.Infraestructure\FIAP.AquaGuard.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

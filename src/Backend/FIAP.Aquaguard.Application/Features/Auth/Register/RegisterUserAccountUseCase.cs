@@ -1,5 +1,4 @@
 ﻿using FIAP.AquaGuard.API.Models;
-using FIAP.AquaGuard.Application.Features.Auth.Register;
 using FIAP.AquaGuard.Application.Shared.Responses;
 using FIAP.AquaGuard.Domain.Entities;
 using FIAP.AquaGuard.Domain.Enums;

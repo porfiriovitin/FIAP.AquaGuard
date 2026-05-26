@@ -6,13 +6,13 @@
     <File Path="init.sql" />
   </Folder>
   <Folder Name="/src/Backend/">
-    <Project Path="FIAP.AquaGuard.API/FIAP.AquaGuard.API.csproj" />
-    <Project Path="FIAP.Aquaguard.Application/FIAP.Aquaguard.Application.csproj" />
-    <Project Path="FIAP.AquaGuard.Domain/FIAP.AquaGuard.Domain.csproj" />
-    <Project Path="FIAP.AquaGuard.Infraestructure/FIAP.AquaGuard.Infrastructure.csproj" />
+    <Project Path="src/Backend/FIAP.AquaGuard.API/FIAP.AquaGuard.API.csproj" />
+    <Project Path="src/Backend/FIAP.Aquaguard.Application/FIAP.Aquaguard.Application.csproj" />
+    <Project Path="src/Backend/FIAP.AquaGuard.Domain/FIAP.AquaGuard.Domain.csproj" />
+    <Project Path="src/Backend/FIAP.AquaGuard.Infraestructure/FIAP.AquaGuard.Infrastructure.csproj" />
   </Folder>
   <Folder Name="/src/Shared/">
-    <Project Path="FIAP.AquaGuard.Exception/FIAP.AquaGuard.Exception.csproj" />
+    <Project Path="src/Shared/FIAP.AquaGuard.Exception/FIAP.AquaGuard.Exception.csproj" />
   </Folder>
   <Folder Name="/tests/" />
 </Solution>
