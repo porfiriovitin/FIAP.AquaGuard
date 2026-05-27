@@ -17,13 +17,11 @@ class CityRepository : ICityRepository
     public async Task AddAsync(City city)
     {
         await _context.Cities.AddAsync(city);
-        await _context.SaveChangesAsync();
     }
 
     public async Task DeleteAsync(City city)
     {
         _context.Cities.Remove(city);
-        await _context.SaveChangesAsync();
     }
 
     public async Task<(List<City> Items, int Total)> GetAllAsync(int page = 1, int pageSize = 10)
@@ -56,6 +54,5 @@ class CityRepository : ICityRepository
     public async Task UpdateAsync(City city)
     {
         _context.Cities.Update(city);
-        await _context.SaveChangesAsync();
     }
 }

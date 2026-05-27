@@ -7,6 +7,6 @@ public interface IUserRepository
     Task AddAsync(User user);
     Task<User?> GetByEmailAsync(string email);
     Task<User?> GetByIdAsync(Guid id);
-    Task DeleteAsync(User user);
-    Task UpdateAsync(User user);
+    void Delete(User user);
+    void Update(User user);
 }

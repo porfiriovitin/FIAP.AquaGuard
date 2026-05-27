@@ -17,13 +17,11 @@ public class SensorRepository : ISensorRepository
     public async Task AddAsync(Sensor sensor)
     {
         await _context.Sensors.AddAsync(sensor);
-        await _context.SaveChangesAsync();
     }
 
     public async Task DeleteAsync(Sensor sensor)
     {
         _context.Sensors.Remove(sensor);
-        await _context.SaveChangesAsync();
     }
 
     public async Task<(List<Sensor> Items, int Total)> GetAllAsync(int page = 1, int pageSize = 10, Guid cityId = default)
@@ -53,6 +51,5 @@ public class SensorRepository : ISensorRepository
     public async Task UpdateAsync(Sensor sensor)
     {
         _context.Sensors.Update(sensor);
-        await _context.SaveChangesAsync();
     }
 }

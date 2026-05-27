@@ -17,13 +17,11 @@ public class RiskAnalysisRepository : IRiskAnalysisRepository
     public async Task AddAsync(RiskAnalysis riskAnalysis)
     {
         await _context.RiskAnalyses.AddAsync(riskAnalysis);
-        await _context.SaveChangesAsync();
     }
 
     public async Task DeleteAsync(RiskAnalysis riskAnalysis)
     {
         _context.RiskAnalyses.Remove(riskAnalysis);
-        await _context.SaveChangesAsync();
     }
 
     public async Task<(List<RiskAnalysis> Items, int Total)> GetAllAsync(int page = 1, int pageSize = 10, Guid cityId = default)
@@ -53,6 +51,5 @@ public class RiskAnalysisRepository : IRiskAnalysisRepository
     public async Task UpdateAsync(RiskAnalysis riskAnalysis)
     {
         _context.RiskAnalyses.Update(riskAnalysis);
-        await _context.SaveChangesAsync();
     }
 }

@@ -1,5 +1,5 @@
-﻿using FIAP.AquaGuard.Application.Shared.Responses;
-using FIAP.AquaGuard.API.Models;
+﻿using FIAP.Aquaguard.Application.Shared.Responses;
+using FIAP.AquaGuard.Application.Shared.Responses;
 using FIAP.AquaGuard.Exception;
 using FIAP.AquaGuard.Exception.ExceptionsBase;
 using Microsoft.AspNetCore.Mvc;
@@ -23,6 +23,10 @@ namespace FIAP.AquaGuard.API.Filters
                 case ErrorOnValidationException:
                     context.HttpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
                     context.Result = new BadRequestObjectResult(payload);
+                    break;
+                case LoginException:
+                    context.HttpContext.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                    context.Result = new UnauthorizedObjectResult(payload);
                     break;
                 default:
                     context.HttpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;

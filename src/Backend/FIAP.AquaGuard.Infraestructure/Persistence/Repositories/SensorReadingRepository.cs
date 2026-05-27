@@ -16,13 +16,11 @@ public class SensorReadingRepository : ISensorReadingRepository
     public async Task AddAsync(SensorReading sensorReading)
     {
         await _context.SensorReadings.AddAsync(sensorReading);
-        await _context.SaveChangesAsync();
     }
 
     public async Task DeleteAsync(SensorReading sensorReading)
     {
         _context.SensorReadings.Remove(sensorReading);
-        await _context.SaveChangesAsync();
     }
 
     public async Task<SensorReading?> GetByIdAsync(Guid id)
@@ -33,6 +31,5 @@ public class SensorReadingRepository : ISensorReadingRepository
     public async Task UpdateAsync(SensorReading sensorReading)
     {
         _context.SensorReadings.Update(sensorReading);
-        await _context.SaveChangesAsync();
     }
 }

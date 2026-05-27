@@ -16,13 +16,11 @@ public class RiskDataSourceRepository : IRiskDataSourceRepository
     public async Task AddAsync(RiskDataSource riskDataSource)
     {
         await _context.RiskDataSources.AddAsync(riskDataSource);
-        await _context.SaveChangesAsync();
     }
 
     public async Task DeleteAsync(RiskDataSource riskDataSource)
     {
         _context.RiskDataSources.Remove(riskDataSource);
-        await _context.SaveChangesAsync();
     }
 
     public async Task<RiskDataSource?> GetByIdAsync(Guid id)
@@ -33,6 +31,5 @@ public class RiskDataSourceRepository : IRiskDataSourceRepository
     public async Task UpdateAsync(RiskDataSource riskDataSource)
     {
         _context.RiskDataSources.Update(riskDataSource);
-        await _context.SaveChangesAsync();
     }
 }

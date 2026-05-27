@@ -1,7 +1,11 @@
 ﻿using Fiap.AquaGuard.Infrastructure.Persistence;
 using FIAP.AquaGuard.Domain.Enums;
+using FIAP.AquaGuard.Domain.Providers;
 using FIAP.AquaGuard.Domain.Repositories;
+using FIAP.AquaGuard.Domain.Services;
+using FIAP.AquaGuard.Infrastructure.Persistence;
 using FIAP.AquaGuard.Infrastructure.Persistence.Repositories;
+using FIAP.AquaGuard.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -39,6 +43,10 @@ public static class DependencyInjection
         services.AddScoped<IRiskAnalysisRepository, RiskAnalysisRepository>();
         services.AddScoped<IRiskAnalysisSensorReadingRepository, RiskAnalysisSensorReadingRepository>();
         services.AddScoped<IRiskDataSourceRepository, RiskDataSourceRepository>();
+
+        services.AddScoped<ITokenProvider, JwtService>();
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddScoped<IPasswordHasherProvider, BCryptService>();
 
         return services;
     }

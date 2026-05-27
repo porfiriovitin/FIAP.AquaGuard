@@ -16,13 +16,11 @@ public class RiskAnalysisSensorReadingRepository : IRiskAnalysisSensorReadingRep
     public async Task AddAsync(RiskAnalysisSensorReading riskAnalysisSensorReading)
     {
         await _context.RiskAnalysisSensorReadings.AddAsync(riskAnalysisSensorReading);
-        await _context.SaveChangesAsync();
     }
 
     public async Task DeleteAsync(RiskAnalysisSensorReading riskAnalysisSensorReading)
     {
         _context.RiskAnalysisSensorReadings.Remove(riskAnalysisSensorReading);
-        await _context.SaveChangesAsync();
     }
 
     public async Task<RiskAnalysisSensorReading?> GetByIdAsync(Guid id)
@@ -33,6 +31,5 @@ public class RiskAnalysisSensorReadingRepository : IRiskAnalysisSensorReadingRep
     public async Task UpdateAsync(RiskAnalysisSensorReading riskAnalysisSensorReading)
     {
         _context.RiskAnalysisSensorReadings.Update(riskAnalysisSensorReading);
-        await _context.SaveChangesAsync();
     }
 }

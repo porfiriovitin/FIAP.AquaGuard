@@ -1,4 +1,4 @@
-﻿namespace FIAP.AquaGuard.API.Models;
+﻿namespace FIAP.Aquaguard.Application.Shared.Responses;
 
 public record PayloadResponse<T>
 {

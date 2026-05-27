@@ -61,6 +61,15 @@ namespace FIAP.AquaGuard.Exception {
         }
         
         /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Invalid email or password..
+        /// </summary>
+        public static string LOGIN_INVALID {
+            get {
+                return ResourceManager.GetString("LOGIN_INVALID", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Unknown error..
         /// </summary>
         public static string UNKNOWN_ERROR {
