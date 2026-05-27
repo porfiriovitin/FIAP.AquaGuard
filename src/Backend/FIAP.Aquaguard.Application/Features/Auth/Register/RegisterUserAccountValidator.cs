@@ -14,7 +14,7 @@ namespace FIAP.AquaGuard.Application.Features.Auth.Register
             {
                 RuleFor(user => user.Email).EmailAddress().WithMessage(ResourceMessagesException.VALIDATION_EMAIL_INVALID);
             });
-            RuleFor(user => user.Role).Must(role => nameof(UserRole.Admin) != role.ToString()).WithMessage(ResourceMessagesException.VALIDATION_ROLE_INVALID);
+            //RuleFor(user => user.Role).Must(role => role == null || nameof(UserRole.Admin) != role.ToString()).WithMessage(ResourceMessagesException.VALIDATION_ROLE_INVALID);
         }
     }
 }

@@ -6,7 +6,24 @@ using Microsoft.AspNetCore.Localization;
 using Scalar.AspNetCore;
 using System.Globalization;
 
-Env.Load("../.env");
+static string FindEnvFile()
+{
+    var directory = new DirectoryInfo(AppContext.BaseDirectory);
+
+    while (directory != null)
+    {
+        var envPath = Path.Combine(directory.FullName, ".env");
+
+        if (File.Exists(envPath))
+            return envPath;
+
+        directory = directory.Parent;
+    }
+
+    throw new FileNotFoundException("Arquivo .env não encontrado.");
+}
+
+Env.Load(FindEnvFile());
 
 var builder = WebApplication.CreateBuilder(args);
 

@@ -35,6 +35,7 @@ public class RegisterUserAccountUseCase
             Name = request.Name,
             Email = request.Email,
             Role = UserRole.Employee,
+            CreatedAt = DateTime.UtcNow
         };
 
         /// :: Hashes the password.

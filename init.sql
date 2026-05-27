@@ -11,7 +11,8 @@ create extension if not exists "pgcrypto";
 create type user_role as enum (
   'Admin',
   'Manager',
-  'Employee'
+  'Employee',
+  'Resident'
 );
 
 create type sensor_type as enum (

@@ -33,6 +33,12 @@ public static class DependencyInjection
             .UseSnakeCaseNamingConvention());
 
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<ICityRepository, CityRepository>();
+        services.AddScoped<ISensorRepository, SensorRepository>();
+        services.AddScoped<ISensorReadingRepository, SensorReadingRepository>();
+        services.AddScoped<IRiskAnalysisRepository, RiskAnalysisRepository>();
+        services.AddScoped<IRiskAnalysisSensorReadingRepository, RiskAnalysisSensorReadingRepository>();
+        services.AddScoped<IRiskDataSourceRepository, RiskDataSourceRepository>();
 
         return services;
     }

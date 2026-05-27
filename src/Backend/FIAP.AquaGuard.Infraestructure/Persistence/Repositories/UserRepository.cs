@@ -14,29 +14,27 @@ namespace FIAP.AquaGuard.Infrastructure.Persistence.Repositories
             _context = context;
         }
 
-        public Task AddAsync(User user)
+        public async Task AddAsync(User user)
         {
-            throw new NotImplementedException();
+            await _context.Users.AddAsync(user);
+            await _context.SaveChangesAsync();
         }
 
-        public Task DeleteAsync(User user)
+        public async Task DeleteAsync(User user)
         {
-            throw new NotImplementedException();
+            _context.Users.Remove(user);
+            await _context.SaveChangesAsync();
         }
 
-        public async Task<User?> GetByEmailAsync(string email)
-        {
-            return await _context.Users.FirstOrDefaultAsync(y => y.Email == email);
-        }
+        public async Task<User?> GetByEmailAsync(string email) => await _context.Users.FirstOrDefaultAsync(y => y.Email == email);
 
-        public Task<User?> GetByIdAsync(long id)
-        {
-            throw new NotImplementedException();
-        }
 
-        public Task UpdateAsync(User user)
+        public async Task<User?> GetByIdAsync(Guid id) => await _context.Users.FirstOrDefaultAsync(y => y.Id == id);
+
+        public async Task UpdateAsync(User user)
         {
-            throw new NotImplementedException();
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
         }
     }
 }

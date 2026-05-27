@@ -8,11 +8,10 @@ public class User
     public string Name { get; set; } = string.Empty;
     public string Email { get; set; } = string.Empty;
     public string PasswordHash { get; set; } = string.Empty;
-    public UserRole Role { get; set; } = UserRole.Employee;
+    public UserRole Role { get; set; } = UserRole.Resident;
     public Guid? CityId { get; set; }
     public DateTimeOffset CreatedAt { get; set; }
     public DateTimeOffset? UpdatedAt { get; set; }
-
     public City? City { get; set; }
     public ICollection<City> ResponsibleCities { get; set; } = new List<City>();
 }
