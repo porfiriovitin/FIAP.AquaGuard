@@ -1,9 +1,8 @@
 ﻿using FIAP.Aquaguard.Application.Features.Auth.Login;
 using FIAP.Aquaguard.Application.Shared.Responses;
+using FIAP.AquaGuard.API.Infra.Authentication;
 using FIAP.AquaGuard.Application.Shared.Responses;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace FIAP.AquaGuard.API.Controllers;
 
@@ -12,10 +11,12 @@ namespace FIAP.AquaGuard.API.Controllers;
 public class LoginController : ControllerBase
 {
     private readonly LoginUseCase _useCase;
+    private readonly IAuthCookieService _authCookieService;
 
-    public LoginController(LoginUseCase useCase)
+    public LoginController(LoginUseCase useCase, IAuthCookieService authCookieService)
     {
         _useCase = useCase;
+        _authCookieService = authCookieService;
     }
 
     [HttpPost]
@@ -26,18 +27,20 @@ public class LoginController : ControllerBase
     {
         ResponseLogin result = await _useCase.ExecuteAsync(request);
 
-        ResponseLoginDTO responseDTO = new(result.Name, result.Email, result.Role);
+        _authCookieService.SetAccessToken(result.Token);
 
-        Response.Cookies.Append("access_token", result.Token, new CookieOptions
+        var responseDTO = new ResponseLoginDTO(
+            result.Name,
+            result.Email,
+            result.Role
+        );
+
+        return StatusCode(StatusCodes.Status200OK, new PayloadResponse<ResponseLoginDTO>
         {
-            HttpOnly = true,
-            Secure = true,
-            SameSite = SameSiteMode.None,
-            Expires = DateTimeOffset.UtcNow.AddMinutes(15),
-            Path = "/"
+            Status = nameof(ResponseStatus.Success),
+            Message = "Login realizado com sucesso",
+            Data = responseDTO
         });
-
-        return Ok(new PayloadResponse<ResponseLoginDTO> {Status=nameof(ResponseStatus.Success), Message= "Login Realizado com sucesso" ,Data = responseDTO });
     }
- 
+
 }

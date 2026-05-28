@@ -1,4 +1,4 @@
-﻿using Fiap.AquaGuard.Infrastructure.Persistence;
+﻿using FIAP.AquaGuard.Infrastructure.Persistence;
 using FIAP.AquaGuard.Domain.Repositories;
 
 namespace FIAP.AquaGuard.Infrastructure.Persistence;

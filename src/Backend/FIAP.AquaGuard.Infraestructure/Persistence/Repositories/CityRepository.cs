@@ -1,4 +1,4 @@
-﻿using Fiap.AquaGuard.Infrastructure.Persistence;
+﻿using FIAP.AquaGuard.Infrastructure.Persistence;
 using FIAP.AquaGuard.Domain.Entities;
 using FIAP.AquaGuard.Domain.Repositories;
 using Microsoft.EntityFrameworkCore;

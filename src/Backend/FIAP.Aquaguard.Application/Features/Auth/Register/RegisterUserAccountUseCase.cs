@@ -29,7 +29,7 @@ public class RegisterUserAccountUseCase
         _validator = validator;
     }
 
-    public async Task<PayloadResponse<ResponseRegisteredUser>> ExecuteAsync(RequestRegisterUser request)
+    public async Task<ResponseRegisteredUser> ExecuteAsync(RequestRegisterUser request)
     {
         /// :: Validate the request.
         Validate(request, _validator);
@@ -46,7 +46,7 @@ public class RegisterUserAccountUseCase
         /// :: Maps the request to the domain model.
         User newUser = new(
             name: request.Name,
-            email: request.Email,
+            email: request.Email.Trim(),
             passwordHash: hashedPassword,
             role: UserRole.Employee);
 
@@ -55,12 +55,11 @@ public class RegisterUserAccountUseCase
 
         await _unitOfWork.CommitAsync();
 
-        return new PayloadResponse<ResponseRegisteredUser>
-        {
-            Status = nameof(ResponseStatus.Success),
-            Message = ResourceMessagesException.USER_REGISTERED_SUCESSFULLY,
-            Data = new ResponseRegisteredUser(request.Name, request.Email)
-        };
+        return new ResponseRegisteredUser(
+            Name: newUser.Name,
+            Email: newUser.Email
+        );
+        
     }
 
     private static void Validate(RequestRegisterUser request, IValidator<RequestRegisterUser> validator)
