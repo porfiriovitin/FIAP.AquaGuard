@@ -36,7 +36,6 @@ var builder = WebApplication.CreateBuilder(args);
 Env.Load(FindEnvFile());
 builder.Configuration.AddEnvironmentVariables();
 
-
 /// :: Configure JWT authentication.
 var jwtOptions = builder.Configuration.GetSection(JwtOptions.SectionName).Get<JwtOptions>() ?? throw new InvalidOperationException("JWT configuration is missing.");
 
