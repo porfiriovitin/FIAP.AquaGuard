@@ -1,0 +1,2279 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AquaGuard — Previsão · Tecnologia · Prevenção</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.css" rel="stylesheet" />
+  <script src="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.453.0/dist/umd/lucide.min.js"></script>
+
+  <style>
+    /* ─── Design tokens ─────────────────────────────────────── */
+    :root {
+      --navy-950: #061a33;
+      --navy-900: #0b2545;
+      --navy-800: #14365e;
+      --navy-700: #1a4a7e;
+      --navy-600: #21609d;
+      --blue-700: #1455c0;
+      --blue-600: #1f6fe5;
+      --cyan-700: #0f8a93;
+      --cyan-600: #149aa4;
+      --cyan-500: #20bfc8;
+      --cyan-400: #2dd4d4;
+      --cyan-300: #6ee5e0;
+      --cyan-100: #d0f5f3;
+      --cyan-50:  #ecfbfa;
+      --mint-400: #46dcc3;
+      --ink-950: #050b15;
+      --ink-900: #0d1726;
+      --ink-700: #2a3a52;
+      --ink-600: #475672;
+      --ink-500: #677694;
+      --ink-400: #94a1ba;
+      --ink-300: #c2cad8;
+      --ink-200: #dde3ec;
+      --ink-100: #f1f4f9;
+      --ink-50:  #f7f9fc;
+      --white:   #ffffff;
+      --risk-critical: #d63a3a;
+      --risk-high: #ef7a1a;
+      --risk-moderate: #f1b50a;
+      --risk-low: #1bb892;
+      --font-display: 'Sora', system-ui, sans-serif;
+      --font-sans:    'DM Sans', system-ui, sans-serif;
+      --font-mono:    'JetBrains Mono', monospace;
+      --tr-eyebrow: 0.12em;
+      --tr-tighter: -0.035em;
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 14px;
+      --radius-pill: 999px;
+      --shadow-md: 0 4px 12px -2px rgba(11,37,69,0.14);
+      --shadow-lg: 0 16px 40px -12px rgba(11,37,69,0.22);
+
+      /* Statement section bg — tweakable */
+      --statement-bg: #7d9db8;
+      /* Accent — tweakable */
+      --accent: var(--cyan-500);
+    }
+
+    /* ─── Reset ──────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-sans);
+      background: var(--white);
+      color: var(--ink-900);
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    a { text-decoration: none; color: inherit; }
+    img { display: block; max-width: 100%; }
+    button { border: none; background: none; cursor: pointer; font: inherit; }
+
+    /* ─── Nav ────────────────────────────────────────────────── */
+    .nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 24px;
+      transition: background 0.3s ease, border-color 0.3s ease;
+    }
+    .nav.scrolled {
+      background: rgba(255,255,255,0.96);
+      border-bottom: 1px solid var(--ink-200);
+      backdrop-filter: blur(8px);
+      padding: 16px 24px;
+    }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .nav-brand img {
+      width: 28px;
+      height: 28px;
+      object-fit: contain;
+    }
+    .nav-wordmark {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 15px;
+      letter-spacing: 0.14em;
+      color: var(--white);
+      transition: color 0.3s;
+    }
+    .nav.scrolled .nav-wordmark { color: var(--navy-900); }
+    .hamburger {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding: 4px;
+      cursor: pointer;
+    }
+    .hamburger span {
+      display: block;
+      width: 24px;
+      height: 1.5px;
+      background: var(--white);
+      transition: background 0.3s;
+    }
+    .nav.scrolled .hamburger span { background: var(--ink-900); }
+
+    /* ─── Menu overlay ───────────────────────────────────────── */
+    .menu-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      background: var(--white);
+      display: flex;
+      flex-direction: column;
+      transform: translateY(-100%);
+      opacity: 0;
+      transition: transform 0.45s cubic-bezier(0.2,0.7,0.1,1), opacity 0.35s ease;
+      pointer-events: none;
+    }
+    .menu-overlay.open {
+      transform: translateY(0);
+      opacity: 1;
+      pointer-events: all;
+    }
+    .menu-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--ink-100);
+    }
+    .menu-header .nav-wordmark { color: var(--navy-900); }
+    .menu-close {
+      font-family: var(--font-display);
+      font-size: 22px;
+      color: var(--ink-700);
+      padding: 4px;
+      line-height: 1;
+    }
+    .menu-nav {
+      flex: 1;
+      padding: 32px 24px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .menu-nav a {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: clamp(30px, 8vw, 44px);
+      line-height: 1.15;
+      color: var(--navy-900);
+      padding: 10px 0;
+      border-bottom: 1px solid var(--ink-100);
+      letter-spacing: -0.02em;
+      transition: color 0.15s;
+    }
+    .menu-nav a:last-child { border-bottom: none; }
+    .menu-nav a:hover { color: var(--cyan-600); }
+    .menu-nav a svg { color: var(--ink-400); flex-shrink: 0; }
+    .menu-secondary {
+      padding: 24px 24px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      border-top: 1px solid var(--ink-100);
+    }
+    .menu-sec-links {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+    .menu-sec-links a {
+      font-size: 14px;
+      color: var(--ink-600);
+      transition: color 0.15s;
+    }
+    .menu-sec-links a:hover { color: var(--ink-900); }
+    .menu-social {
+      display: flex;
+      gap: 20px;
+    }
+    .menu-social a {
+      color: var(--ink-500);
+      display: flex;
+      align-items: center;
+      transition: color 0.15s;
+    }
+    .menu-social a:hover { color: var(--ink-900); }
+    .menu-cta {
+      display: block;
+      background: var(--navy-900);
+      color: var(--white);
+      text-align: center;
+      font-family: var(--font-sans);
+      font-size: 15px;
+      font-weight: 500;
+      padding: 18px 24px;
+      letter-spacing: 0.01em;
+      transition: background 0.15s;
+    }
+    .menu-cta:hover { background: var(--navy-800); }
+
+    /* ─── Hero ───────────────────────────────────────────────── */
+    .hero {
+      position: relative;
+      width: 100%;
+      height: 100svh;
+      min-height: 600px;
+      overflow: hidden;
+      background: var(--navy-950);
+    }
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+    }
+    .hero-bg canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+    /* Bottom gradient scrim for text legibility */
+    .hero-scrim {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to top,
+        rgba(6,26,51,0.92) 0%,
+        rgba(6,26,51,0.40) 42%,
+        transparent 70%
+      );
+    }
+    .hero-content {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      padding: 0 24px 44px;
+    }
+    .hero-eyebrow {
+      font-family: var(--font-sans);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: var(--tr-eyebrow);
+      text-transform: uppercase;
+      color: var(--cyan-400);
+      margin-bottom: 14px;
+    }
+    .hero h1 {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: clamp(38px, 11vw, 64px);
+      line-height: 1.06;
+      letter-spacing: var(--tr-tighter);
+      color: var(--white);
+      margin-bottom: 32px;
+      text-wrap: balance;
+    }
+    .hero h1 em {
+      font-style: italic;
+      color: var(--cyan-300);
+    }
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .btn-play {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--white);
+      flex-shrink: 0;
+      backdrop-filter: blur(4px);
+      transition: background 0.2s;
+    }
+    .btn-play:hover { background: rgba(255,255,255,0.2); }
+    .btn-play svg { margin-left: 2px; }
+    .hero-link {
+      font-size: 14px;
+      font-weight: 500;
+      color: rgba(255,255,255,0.85);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 0.2s;
+    }
+    .hero-link:hover { color: var(--white); }
+    .hero-link svg { color: var(--cyan-400); }
+
+    /* ─── Statement ──────────────────────────────────────────── */
+    .statement {
+      position: relative;
+      background: var(--statement-bg);
+      padding: 96px 36px 108px;
+      overflow: hidden;
+      min-height: 100svh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      text-align: left;
+    }
+    .statement > *:not(canvas) { position: relative; z-index: 1; }
+    .corner-mark {
+      position: absolute;
+      font-family: var(--font-sans);
+      font-size: 20px;
+      font-weight: 300;
+      color: rgba(255,255,255,0.35);
+      line-height: 1;
+      user-select: none;
+    }
+    .corner-tl { top: 20px; left: 20px; }
+    .corner-tr { top: 20px; right: 20px; }
+    .corner-bl { bottom: 20px; left: 20px; }
+    .corner-br { bottom: 20px; right: 20px; }
+    .statement-text {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: clamp(24px, 6.5vw, 42px);
+      line-height: 1.18;
+      letter-spacing: -0.02em;
+      color: var(--white);
+      margin-bottom: 40px;
+      text-wrap: pretty;
+    }
+    .scroll-word {
+      color: rgba(255,255,255,0.15);
+      transition: color 0.25s ease;
+    }
+    .scroll-word.lit {
+      color: var(--white);
+    }
+    .btn-outline-light {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 20px;
+      border: 1px solid rgba(255,255,255,0.55);
+      background: transparent;
+      color: var(--white);
+      font-size: 14px;
+      font-weight: 500;
+      border-radius: var(--radius-md);
+      transition: background 0.2s, border-color 0.2s;
+      cursor: pointer;
+    }
+    .btn-outline-light:hover {
+      background: rgba(255,255,255,0.1);
+      border-color: rgba(255,255,255,0.8);
+    }
+
+    /* ─── Pillars ────────────────────────────────────────────── */
+    .pillars {
+      background: var(--white);
+      padding: 56px 24px 0;
+    }
+    .section-eyebrow {
+      font-family: var(--font-sans);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: var(--tr-eyebrow);
+      text-transform: uppercase;
+      color: var(--cyan-600);
+      margin-bottom: 32px;
+    }
+    .pillar-row {
+      display: grid;
+      grid-template-columns: 36px 1fr 20px;
+      align-items: start;
+      gap: 16px;
+      padding: 24px 0;
+      border-top: 1px solid var(--ink-200);
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .pillar-row:last-child { border-bottom: 1px solid var(--ink-200); }
+    .pillar-row:hover { background: var(--ink-50); margin: 0 -24px; padding-left: 24px; padding-right: 24px; }
+    .pillar-num {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--ink-400);
+      padding-top: 3px;
+      letter-spacing: 0.02em;
+    }
+    .pillar-body h3 {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 22px;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+      color: var(--navy-900);
+      margin-bottom: 6px;
+    }
+    .pillar-body p {
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--ink-600);
+    }
+    .pillar-chevron {
+      color: var(--ink-400);
+      padding-top: 3px;
+    }
+    .pillars-bottom {
+      padding: 40px 0 56px;
+    }
+
+    /* ─── Metrics / data strip ───────────────────────────────── */
+    .metrics {
+      background: var(--navy-900);
+      padding: 56px 24px;
+      position: relative;
+    }
+    .metrics .section-eyebrow { color: var(--cyan-400); }
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+    }
+    .metric-cell {
+      padding: 28px 0;
+      border-top: 1px solid rgba(255,255,255,0.10);
+    }
+    .metric-cell:nth-child(odd) {
+      padding-right: 24px;
+      border-right: 1px solid rgba(255,255,255,0.10);
+    }
+    .metric-cell:nth-child(even) {
+      padding-left: 24px;
+    }
+    .metric-val {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: clamp(32px, 8vw, 48px);
+      line-height: 1;
+      letter-spacing: -0.03em;
+      color: var(--white);
+      display: block;
+      margin-bottom: 6px;
+      font-feature-settings: "tnum" 1;
+    }
+    .metric-val span {
+      color: var(--cyan-400);
+    }
+    .metric-label {
+      font-size: 13px;
+      color: rgba(255,255,255,0.5);
+      line-height: 1.4;
+      font-weight: 400;
+    }
+
+    /* ─── Feature section ────────────────────────────────────── */
+    .feature {
+      background: var(--navy-900);
+      padding: 64px 24px 0;
+    }
+    .feature h2 {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: clamp(28px, 7.5vw, 48px);
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      color: var(--white);
+      margin-bottom: 16px;
+      text-wrap: balance;
+    }
+    .feature .section-eyebrow { color: var(--cyan-400); }
+    .feature-body {
+      font-size: 15px;
+      line-height: 1.65;
+      color: rgba(255,255,255,0.6);
+      margin-bottom: 28px;
+      text-wrap: pretty;
+    }
+    .text-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--white);
+      margin-bottom: 48px;
+      transition: gap 0.2s;
+    }
+    .text-link:hover { gap: 10px; }
+    .text-link svg { color: var(--cyan-400); }
+    .feature-visual {
+      background: var(--navy-950);
+      border-radius: 16px 16px 0 0;
+      margin: 0 -24px;
+      padding: 24px;
+      min-height: 240px;
+      position: relative;
+      overflow: hidden;
+    }
+    .feature-visual-label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--cyan-400);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+    .sim-bars {
+      display: flex;
+      gap: 6px;
+      align-items: flex-end;
+      height: 100px;
+    }
+    .sim-bar {
+      flex: 1;
+      border-radius: 3px 3px 0 0;
+      background: var(--navy-800);
+      transition: height 0.3s ease;
+    }
+    .sim-bar.active { background: var(--cyan-600); }
+    .sim-bar.warning { background: var(--risk-high); }
+    .sim-bar.critical { background: var(--risk-critical); }
+    .sim-threshold {
+      position: absolute;
+      left: 24px; right: 24px;
+      height: 1px;
+      background: rgba(241,181,10,0.6);
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+    }
+    .sim-threshold-label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--risk-moderate);
+      background: var(--navy-900);
+      padding: 0 4px;
+      white-space: nowrap;
+    }
+    .sim-grid-line {
+      position: absolute;
+      left: 24px; right: 24px;
+      height: 1px;
+      background: rgba(255,255,255,0.05);
+    }
+
+    /* ─── Sensors / IoT pipeline ─────────────────────────────── */
+    .sensors {
+      position: relative;
+      background: var(--ink-50);
+      padding: 64px 24px 80px;
+      overflow: hidden;
+    }
+    .sensors > *:not(canvas):not(.sensors-bg) { position: relative; z-index: 1; }
+    .sensors-bg {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+    }
+    .sensors-bg canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0.35;
+    }
+    .sensors-scrim {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(247,249,252,0.3) 0%,
+        rgba(247,249,252,0.65) 50%,
+        rgba(247,249,252,0.85) 100%
+      );
+    }
+    .sensors h2 {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: clamp(28px, 7.5vw, 48px);
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      color: var(--navy-900);
+      margin-bottom: 16px;
+      text-wrap: balance;
+    }
+    .sensors-sub {
+      font-size: 15px;
+      line-height: 1.65;
+      color: var(--ink-600);
+      margin-bottom: 56px;
+      text-wrap: pretty;
+    }
+    .pipeline {
+      position: relative;
+      padding-left: 64px;
+    }
+    .pipeline-line {
+      position: absolute;
+      left: 23px;
+      top: 24px;
+      bottom: 60px;
+      width: 2px;
+      background: var(--ink-200);
+      overflow: hidden;
+      border-radius: 1px;
+    }
+    .pipeline-line-fill {
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 0%;
+      background: linear-gradient(to bottom, var(--cyan-500), var(--cyan-400));
+      transition: height 0.12s linear;
+      box-shadow: 0 0 12px rgba(32,191,200,0.4);
+    }
+    .pipeline-node {
+      position: relative;
+      padding-bottom: 44px;
+    }
+    .pipeline-node:last-child { padding-bottom: 0; }
+    .pipeline-circle {
+      position: absolute;
+      left: -64px;
+      top: -2px;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--white);
+      border: 2px solid var(--ink-200);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--ink-400);
+      transition: border-color 0.4s, color 0.4s, box-shadow 0.4s, transform 0.4s;
+      z-index: 2;
+    }
+    .pipeline-node.active .pipeline-circle {
+      border-color: var(--cyan-500);
+      color: var(--cyan-600);
+      box-shadow: 0 0 0 6px rgba(32,191,200,0.12), 0 4px 12px rgba(32,191,200,0.2);
+      transform: scale(1.05);
+    }
+    .pipeline-label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--ink-400);
+      margin-bottom: 6px;
+      transition: color 0.3s;
+    }
+    .pipeline-node.active .pipeline-label {
+      color: var(--cyan-600);
+    }
+    .pipeline-info h4 {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 20px;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+      color: var(--navy-900);
+      margin-bottom: 8px;
+    }
+    .pipeline-info p:not(.pipeline-label) {
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--ink-600);
+    }
+
+    /* ─── Alert preview ──────────────────────────────────────── */
+    .alerts {
+      background: var(--white);
+      padding: 64px 24px;
+    }
+    .alerts h2 {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: clamp(26px, 7vw, 44px);
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      color: var(--navy-900);
+      margin-bottom: 12px;
+      text-wrap: balance;
+    }
+    .alerts-sub {
+      font-size: 15px;
+      line-height: 1.65;
+      color: var(--ink-600);
+      margin-bottom: 32px;
+      text-wrap: pretty;
+    }
+
+    /* Grid: single column on mobile, 2-col on wide */
+    .alerts-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+    @media (min-width: 640px) {
+      .alerts-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+      }
+    }
+
+    .alert-card {
+      border: 1px solid var(--ink-200);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-md);
+    }
+    .alert-card-header {
+      background: var(--risk-critical);
+      padding: 11px 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .alert-badge {
+      font-family: var(--font-sans);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--white);
+      flex: 1;
+    }
+    .alert-timestamp {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: rgba(255,255,255,0.65);
+      white-space: nowrap;
+    }
+    .alert-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--white);
+      flex-shrink: 0;
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.75); }
+    }
+    .alert-card-body {
+      padding: 16px;
+      background: var(--white);
+    }
+
+    /* Location row with fill-level bar */
+    .alert-location-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .alert-location {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 16px;
+      color: var(--navy-900);
+      margin-bottom: 3px;
+      line-height: 1.2;
+    }
+    .alert-sub {
+      font-size: 12px;
+      color: var(--ink-500);
+    }
+    .alert-level-bar-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+    .alert-level-bar {
+      width: 6px;
+      height: 48px;
+      background: var(--ink-100);
+      border-radius: 3px;
+      position: relative;
+      overflow: hidden;
+    }
+    .alert-level-bar::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: var(--fill, 50%);
+      background: var(--color, var(--cyan-500));
+      border-radius: 3px;
+      transition: height 0.6s ease;
+    }
+    .alert-level-pct {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 600;
+    }
+
+    .alert-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .alert-stat-label {
+      font-size: 10px;
+      color: var(--ink-500);
+      margin-bottom: 3px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-weight: 600;
+    }
+    .alert-stat-val {
+      font-family: var(--font-mono);
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--navy-900);
+      font-feature-settings: "tnum" 1;
+    }
+    .alert-stat-val.up { color: var(--risk-critical); }
+    .alert-window {
+      background: rgba(214,58,58,0.08);
+      border-radius: var(--radius-sm);
+      padding: 9px 12px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--risk-critical);
+      flex-wrap: wrap;
+    }
+
+    /* ─── CTA ────────────────────────────────────────────────── */
+    .cta-section {
+      background: var(--navy-900);
+      padding: 80px 24px 88px;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-section h2 {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: clamp(30px, 8.5vw, 56px);
+      line-height: 1.08;
+      letter-spacing: -0.03em;
+      color: var(--white);
+      margin-bottom: 36px;
+      text-wrap: balance;
+    }
+    .cta-section h2 em {
+      font-style: normal;
+      color: var(--cyan-400);
+    }
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--white);
+      color: var(--navy-900);
+      font-size: 15px;
+      font-weight: 600;
+      padding: 14px 24px;
+      border-radius: var(--radius-md);
+      border: 1.5px solid transparent;
+      transition: background 0.2s, color 0.2s;
+    }
+    .btn-primary:hover {
+      background: var(--cyan-50);
+      color: var(--navy-900);
+    }
+    .btn-ghost-light {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: transparent;
+      color: rgba(255,255,255,0.7);
+      font-size: 14px;
+      font-weight: 500;
+      padding: 14px 0;
+      transition: color 0.2s;
+    }
+    .btn-ghost-light:hover { color: var(--white); }
+    .cta-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    /* decoração circular atrás do CTA */
+    .cta-section::before {
+      content: "";
+      position: absolute;
+      top: -80px;
+      right: -80px;
+      width: 260px;
+      height: 260px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(32,191,200,0.12) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ─── Footer ─────────────────────────────────────────────── */
+    .footer {
+      background: var(--navy-950);
+      padding: 40px 24px 32px;
+      border-top: 1px solid rgba(255,255,255,0.07);
+    }
+    .footer-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 28px;
+    }
+    .footer-brand img { width: 24px; height: 24px; opacity: 0.85; }
+    .footer-wordmark {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 13px;
+      letter-spacing: 0.14em;
+      color: rgba(255,255,255,0.7);
+    }
+    .footer-links {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px 24px;
+      margin-bottom: 32px;
+    }
+    .footer-links a {
+      font-size: 13px;
+      color: rgba(255,255,255,0.45);
+      transition: color 0.15s;
+    }
+    .footer-links a:hover { color: rgba(255,255,255,0.85); }
+    .footer-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid rgba(255,255,255,0.07);
+      padding-top: 20px;
+    }
+    .footer-copy {
+      font-size: 12px;
+      color: rgba(255,255,255,0.3);
+    }
+    .footer-social {
+      display: flex;
+      gap: 16px;
+    }
+    .footer-social a {
+      color: rgba(255,255,255,0.35);
+      display: flex;
+      align-items: center;
+      transition: color 0.15s;
+    }
+    .footer-social a:hover { color: rgba(255,255,255,0.8); }
+
+    /* ─── Tweaks panel ───────────────────────────────────────── */
+    .tweaks-panel {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 500;
+      background: var(--white);
+      border: 1px solid var(--ink-200);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-lg);
+      width: 232px;
+      overflow: hidden;
+      display: none;
+    }
+    .tweaks-panel.open { display: block; }
+    .tweaks-title {
+      background: var(--navy-900);
+      color: var(--white);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .tweaks-close {
+      color: rgba(255,255,255,0.6);
+      font-size: 16px;
+      line-height: 1;
+      cursor: pointer;
+      background: none;
+      border: none;
+      transition: color 0.15s;
+    }
+    .tweaks-close:hover { color: var(--white); }
+    .tweaks-body { padding: 14px; display: flex; flex-direction: column; gap: 14px; }
+    .tweak-group-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--ink-400);
+      margin-bottom: 6px;
+    }
+    .tweak-options {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .tweak-option {
+      font-size: 12px;
+      font-weight: 500;
+      padding: 5px 10px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--ink-200);
+      color: var(--ink-700);
+      cursor: pointer;
+      transition: all 0.15s;
+      background: var(--white);
+    }
+    .tweak-option.active {
+      background: var(--navy-900);
+      color: var(--white);
+      border-color: var(--navy-900);
+    }
+    .tweak-swatch {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: border-color 0.15s;
+      flex-shrink: 0;
+    }
+    .tweak-swatch.active { border-color: var(--ink-900); }
+  </style>
+</head>
+<body>
+
+  <!-- ── Nav ──────────────────────────────────────────────── -->
+  <nav class="nav" id="nav">
+    <a href="#" class="nav-brand">
+      <img src="assets/logo-mark.png" alt="AquaGuard" />
+      <span class="nav-wordmark">AQUAGUARD</span>
+    </a>
+    <button class="hamburger" id="menuBtn" aria-label="Abrir menu" aria-expanded="false">
+      <span></span>
+      <span></span>
+    </button>
+  </nav>
+
+  <!-- ── Menu overlay ──────────────────────────────────────── -->
+  <div class="menu-overlay" id="menuOverlay" role="dialog" aria-label="Menu de navegação">
+    <div class="menu-header">
+      <a href="#" class="nav-brand">
+        <img src="assets/logo-mark.png" alt="AquaGuard" />
+        <span class="nav-wordmark">AQUAGUARD</span>
+      </a>
+      <button class="menu-close" id="menuClose" aria-label="Fechar menu">✕</button>
+    </div>
+    <nav class="menu-nav" aria-label="Navegação principal">
+      <a href="#">Produto <i data-lucide="chevron-down" style="width:18px;height:18px;"></i></a>
+      <a href="#">Tecnologia</a>
+      <a href="#">Simulação</a>
+      <a href="#">Defesa Civil</a>
+      <a href="#">Casos de uso</a>
+    </nav>
+    <div class="menu-secondary">
+      <div class="menu-sec-links">
+        <a href="#">Documentação</a>
+        <a href="#">Equipe</a>
+        <a href="#">Contato</a>
+        <a href="#">Blog</a>
+      </div>
+      <div class="menu-social">
+        <a href="#" aria-label="LinkedIn"><i data-lucide="linkedin" style="width:18px;height:18px;"></i></a>
+        <a href="#" aria-label="Twitter / X"><i data-lucide="twitter" style="width:18px;height:18px;"></i></a>
+        <a href="#" aria-label="Instagram"><i data-lucide="instagram" style="width:18px;height:18px;"></i></a>
+        <a href="#" aria-label="YouTube"><i data-lucide="youtube" style="width:18px;height:18px;"></i></a>
+      </div>
+    </div>
+    <a href="#" class="menu-cta">Solicitar demonstração</a>
+  </div>
+
+  <!-- ── Hero ──────────────────────────────────────────────── -->
+  <section class="hero" id="hero">
+    <div class="hero-bg">
+      <video id="heroVideo" autoplay muted loop playsinline style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;">
+        <source src="./assets/hero-section-video.mp4" />
+      </video>
+      <div class="hero-scrim"></div>
+    </div>
+    <div class="hero-content">
+      <h1>Antecipe a próxima <em>enchente.</em></h1>
+      <div class="hero-actions">
+        <button class="btn-play" aria-label="Ver demonstração">
+          <i data-lucide="play" style="width:18px;height:18px;"></i>
+        </button>
+        <a href="#" class="hero-link">
+          <i data-lucide="chevron-right" style="width:16px;height:16px;"></i>
+          Ver demonstração completa
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Statement ─────────────────────────────────────────── -->
+  <section class="statement" id="statement" style="background-color: rgb(6, 26, 51); text-align: left">
+    <canvas id="rainCanvas" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;"></canvas>
+
+    <p class="statement-text" id="statementText">AquaGuard monitora bacias hidrográficas em tempo real, simulando enchentes antes que aconteçam.</p>
+    <a href="#" class="btn-outline-light">
+      Ver a plataforma
+      <i data-lucide="arrow-right" style="width:14px;height:14px;"></i>
+    </a>
+  </section>
+
+  <!-- ── Pillars ────────────────────────────────────────────── -->
+  <section class="pillars">
+    <p class="section-eyebrow">Três pilares</p>
+    <div class="pillar-row">
+      <span class="pillar-num">01</span>
+      <div class="pillar-body">
+        <h3>Previsão</h3>
+        <p>Risco de chuva, nível dos rios e escoamento urbano com janela de 6 a 72 horas.</p>
+      </div>
+      <div class="pillar-chevron"><i data-lucide="chevron-right" style="width:18px;height:18px;"></i></div>
+    </div>
+    <div class="pillar-row">
+      <span class="pillar-num">02</span>
+      <div class="pillar-body">
+        <h3>Tecnologia</h3>
+        <p>Rede de sensores IoT, imagens de satélite e modelos hidrológicos integrados em tempo real.</p>
+      </div>
+      <div class="pillar-chevron"><i data-lucide="chevron-right" style="width:18px;height:18px;"></i></div>
+    </div>
+    <div class="pillar-row">
+      <span class="pillar-num">03</span>
+      <div class="pillar-body">
+        <h3>Prevenção</h3>
+        <p>Alertas em tempo real, planos de evacuação e suporte à decisão para a Defesa Civil.</p>
+      </div>
+      <div class="pillar-chevron"><i data-lucide="chevron-right" style="width:18px;height:18px;"></i></div>
+    </div>
+    <div class="pillars-bottom">
+      <a href="#" class="text-link">
+        <i data-lucide="chevron-right" style="width:15px;height:15px;"></i>
+        <span style="color: rgb(11, 37, 69);">Conheça a metodologia</span>
+      </a>
+    </div>
+  </section>
+
+
+  <!-- ── Feature: Simulation ────────────────────────────────── -->
+  <section class="feature">
+    <p class="section-eyebrow">Simulação hidrológica</p>
+    <h2>Veja a enchente antes que ela chegue.</h2>
+    <p class="feature-body">O motor de simulação da AquaGuard processa dados de precipitação, topografia e uso do solo para projetar o avanço da inundação hora a hora.</p>
+    <a href="#" class="text-link">
+      <i data-lucide="chevron-right" style="width:15px;height:15px;"></i>
+      Explorar simulações
+    </a>
+    <div class="feature-visual" id="featureVisual" style="min-height:100svh; padding:0; position:relative;">
+      <div id="simulationMap" style="width:100%; height:100svh; border-radius:16px 16px 0 0; touch-action: pan-y;"></div>
+      <div style="position:absolute; top:14px; left:14px; display:flex; flex-direction:column; gap:8px; pointer-events:none;">
+        <div style="background:rgba(6,26,51,0.82); backdrop-filter:blur(6px); border:1px solid rgba(32,191,200,0.2); border-radius:8px; padding:8px 12px; display:flex; align-items:center; gap:8px;">
+          <div style="width:7px;height:7px;border-radius:50%;background:var(--cyan-400);animation:pulse-dot 2s ease-in-out infinite;"></div>
+          <span style="font-family:var(--font-mono);font-size:10px;color:var(--cyan-400);letter-spacing:0.08em;text-transform:uppercase;">Simulação ativa · T+6h</span>
+        </div>
+        <div style="background:rgba(6,26,51,0.82); backdrop-filter:blur(6px); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:8px 12px;">
+          <p style="font-family:var(--font-mono);font-size:10px;color:rgba(255,255,255,0.4);margin-bottom:4px;letter-spacing:0.06em;">PRECIPITAÇÃO ACUM.</p>
+          <p style="font-family:var(--font-mono);font-size:15px;color:var(--white);font-weight:600;">48,2 <span style="font-size:11px;color:rgba(255,255,255,0.5);">mm/6h</span></p>
+        </div>
+      </div>
+      <div style="position:absolute; top:14px; right:14px; pointer-events:none;">
+        <div style="background:rgba(6,26,51,0.82); backdrop-filter:blur(6px); border:1px solid rgba(214,58,58,0.3); border-radius:8px; padding:8px 12px;">
+          <p style="font-family:var(--font-mono);font-size:10px;color:rgba(255,255,255,0.4);margin-bottom:4px;letter-spacing:0.06em;">RISCO PREVISTO</p>
+          <p style="font-family:var(--font-mono);font-size:13px;color:var(--risk-critical);font-weight:600;">CRÍTICO</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── IoT Sensors ────────────────────────────────────────── -->
+  <section class="sensors" id="sensors">
+    <div class="sensors-bg">
+      <canvas id="sensorsCanvas"></canvas>
+      <div class="sensors-scrim"></div>
+    </div>
+    <p class="section-eyebrow">Sensores de informação</p>
+    <h2>Sensores em campo, dados na nuvem.</h2>
+    <p class="sensors-sub">
+      A rede AquaGuard opera em três camadas integradas. Satélites observam o solo e a atmosfera, sensores IoT medem em campo a cada 60 segundos, e a rede celular entrega os dados à plataforma em tempo real.
+    </p>
+
+    <div class="pipeline" id="pipeline">
+      <div class="pipeline-line"><div class="pipeline-line-fill" id="pipelineFill"></div></div>
+
+      <div class="pipeline-node" data-node="0">
+        <div class="pipeline-circle">
+          <i data-lucide="satellite" style="width:22px;height:22px;"></i>
+        </div>
+        <div class="pipeline-info">
+          <p class="pipeline-label">01 · Satélite</p>
+          <h4>Observação orbital</h4>
+          <p>Imagens em tempo real identificam saturação do solo, cobertura de nuvens e precipitação acumulada na região.</p>
+        </div>
+      </div>
+
+      <div class="pipeline-node" data-node="1">
+        <div class="pipeline-circle">
+          <i data-lucide="radio-tower" style="width:22px;height:22px;"></i>
+        </div>
+        <div class="pipeline-info">
+          <p class="pipeline-label">02 · Sensores</p>
+          <h4>Telemetria em campo</h4>
+          <p>Dispositivos IoT's medem nível de rio, vazão, chuva e umidade do solo. Leituras a cada 60 segundos com energia solar e bateria redundante.</p>
+        </div>
+      </div>
+
+      <div class="pipeline-node" data-node="2">
+        <div class="pipeline-circle">
+          <i data-lucide="smartphone" style="width:22px;height:22px;"></i>
+        </div>
+        <div class="pipeline-info">
+          <p class="pipeline-label">03 · Celular</p>
+          <h4>Conectividade em tempo real</h4>
+          <p>Visualize análise e receba alertas, tudo na palma da sua mão.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Alerts preview ─────────────────────────────────────── -->
+  <section class="alerts">
+    <p class="section-eyebrow">Sistema de alertas</p>
+    <h2>Alertas definidos para cada bacia.</h2>
+    <p class="alerts-sub">Notificações em diferentes canais, guidas pelas previsões do nosso motor, com tempo de ação estimado para cada situação.
+Sem mais surpresas. </p>
+
+    <div class="alerts-grid">
+
+      <!-- Crítico -->
+      <div class="alert-card">
+        <div class="alert-card-header" style="background: var(--risk-critical);">
+          <div class="alert-dot"></div>
+          <span class="alert-badge">Risco crítico</span>
+          <span class="alert-timestamp">2 min atrás</span>
+        </div>
+        <div class="alert-card-body">
+          <div class="alert-location-row">
+            <div>
+              <p class="alert-location">Rio Tietê</p>
+              <p class="alert-sub">Ponte dos Remédios · RH-204</p>
+            </div>
+            <div class="alert-level-bar-wrap">
+              <div class="alert-level-bar" style="--fill: 94%; --color: var(--risk-critical);"></div>
+              <span class="alert-level-pct" style="color: var(--risk-critical);">94%</span>
+            </div>
+          </div>
+          <div class="alert-stats">
+            <div>
+              <p class="alert-stat-label">Nível atual</p>
+              <p class="alert-stat-val">4,82 m</p>
+            </div>
+            <div>
+              <p class="alert-stat-label">Limite</p>
+              <p class="alert-stat-val">5,10 m</p>
+            </div>
+            <div>
+              <p class="alert-stat-label">Tendência</p>
+              <p class="alert-stat-val up">+0,18 m/h</p>
+            </div>
+          </div>
+          <div class="alert-window">
+            <i data-lucide="clock" style="width:14px;height:14px;flex-shrink:0;"></i>
+            Janela de ação: <strong>2 h 40 min</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- Alto -->
+      <div class="alert-card">
+        <div class="alert-card-header" style="background: var(--risk-high);">
+          <div class="alert-dot"></div>
+          <span class="alert-badge">Risco alto</span>
+          <span class="alert-timestamp">8 min atrás</span>
+        </div>
+        <div class="alert-card-body">
+          <div class="alert-location-row">
+            <div>
+              <p class="alert-location">Rio Pinheiros</p>
+              <p class="alert-sub">Marginal Sul · RH-187</p>
+            </div>
+            <div class="alert-level-bar-wrap">
+              <div class="alert-level-bar" style="--fill: 93%; --color: var(--risk-high);"></div>
+              <span class="alert-level-pct" style="color: var(--risk-high);">93%</span>
+            </div>
+          </div>
+          <div class="alert-stats">
+            <div>
+              <p class="alert-stat-label">Nível atual</p>
+              <p class="alert-stat-val">3,54 m</p>
+            </div>
+            <div>
+              <p class="alert-stat-label">Limite</p>
+              <p class="alert-stat-val">3,80 m</p>
+            </div>
+            <div>
+              <p class="alert-stat-label">Tendência</p>
+              <p class="alert-stat-val up">+0,12 m/h</p>
+            </div>
+          </div>
+          <div class="alert-window" style="background: rgba(239,122,26,0.08); color: var(--risk-high);">
+            <i data-lucide="clock" style="width:14px;height:14px;flex-shrink:0;"></i>
+            Janela de ação: <strong>4 h 15 min</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- Moderado -->
+      <div class="alert-card">
+        <div class="alert-card-header" style="background: var(--risk-moderate);">
+          <div class="alert-dot"></div>
+          <span class="alert-badge">Risco moderado</span>
+          <span class="alert-timestamp">12 min atrás</span>
+        </div>
+        <div class="alert-card-body">
+          <div class="alert-location-row">
+            <div>
+              <p class="alert-location">Rio Jacu-Pêssego</p>
+              <p class="alert-sub">Vila Matilde · RH-156</p>
+            </div>
+            <div class="alert-level-bar-wrap">
+              <div class="alert-level-bar" style="--fill: 82%; --color: var(--risk-moderate);"></div>
+              <span class="alert-level-pct" style="color: var(--risk-moderate);">82%</span>
+            </div>
+          </div>
+          <div class="alert-stats">
+            <div>
+              <p class="alert-stat-label">Nível atual</p>
+              <p class="alert-stat-val">2,41 m</p>
+            </div>
+            <div>
+              <p class="alert-stat-label">Limite</p>
+              <p class="alert-stat-val">2,95 m</p>
+            </div>
+            <div>
+              <p class="alert-stat-label">Tendência</p>
+              <p class="alert-stat-val up">+0,08 m/h</p>
+            </div>
+          </div>
+          <div class="alert-window" style="background: rgba(241,181,10,0.08); color: var(--risk-moderate);">
+            <i data-lucide="clock" style="width:14px;height:14px;flex-shrink:0;"></i>
+            Janela de ação: <strong>6 h 30 min</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- Baixo -->
+      <div class="alert-card">
+        <div class="alert-card-header" style="background: var(--risk-low);">
+          <div class="alert-dot"></div>
+          <span class="alert-badge">Risco baixo</span>
+          <span class="alert-timestamp">5 min atrás</span>
+        </div>
+        <div class="alert-card-body">
+          <div class="alert-location-row">
+            <div>
+              <p class="alert-location">Rio Tamanduateí</p>
+              <p class="alert-sub">Parque do Estado · RH-142</p>
+            </div>
+            <div class="alert-level-bar-wrap">
+              <div class="alert-level-bar" style="--fill: 71%; --color: var(--risk-low);"></div>
+              <span class="alert-level-pct" style="color: var(--risk-low);">71%</span>
+            </div>
+          </div>
+          <div class="alert-stats">
+            <div>
+              <p class="alert-stat-label">Nível atual</p>
+              <p class="alert-stat-val">1,78 m</p>
+            </div>
+            <div>
+              <p class="alert-stat-label">Limite</p>
+              <p class="alert-stat-val">2,50 m</p>
+            </div>
+            <div>
+              <p class="alert-stat-label">Tendência</p>
+              <p class="alert-stat-val">+0,04 m/h</p>
+            </div>
+          </div>
+          <div class="alert-window" style="background: rgba(27,184,146,0.08); color: var(--risk-low);">
+            <i data-lucide="clock" style="width:14px;height:14px;flex-shrink:0;"></i>
+            Janela de ação: <strong>12 h 00 min</strong>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /.alerts-grid -->
+
+    <div style="margin-top:28px;">
+      <a href="#" class="text-link">
+        <i data-lucide="chevron-right" style="width:15px;height:15px;"></i>
+        <span style="color: #0b2545;">Ver todos os alertas</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- ── CTA ───────────────────────────────────────────────── -->
+  <section class="cta-section">
+    <canvas id="ctaCanvas" style="position:absolute;top:0;left:0;width:100%;height:50%;pointer-events:none;z-index:0;"></canvas>
+    <div class="cta-glow"></div>
+    <span class="corner-mark corner-tl" style="color:rgba(255,255,255,0.15);">+</span>
+    <span class="corner-mark corner-br" style="color:rgba(255,255,255,0.15);">+</span>
+    <h2>Leve o AquaGuard para sua <em>bacia.</em></h2>
+    <div class="cta-actions">
+      <a href="#" class="btn-primary">
+        Solicitar demonstração
+        <i data-lucide="arrow-right" style="width:15px;height:15px;"></i>
+      </a>
+      <a href="#" class="btn-ghost-light">
+        <i data-lucide="chevron-right" style="width:14px;height:14px;"></i>
+        Falar com a equipe
+      </a>
+    </div>
+  </section>
+
+  <!-- ── Footer ────────────────────────────────────────────── -->
+  <footer class="footer">
+    <div class="footer-brand">
+      <img src="assets/logo-mark.png" alt="AquaGuard" />
+      <span class="footer-wordmark">AQUAGUARD</span>
+    </div>
+    <nav class="footer-links">
+      <a href="#">Produto</a>
+      <a href="#">Tecnologia</a>
+      <a href="#">Simulação</a>
+      <a href="#">Defesa Civil</a>
+      <a href="#" style="color: rgb(255, 255, 255)">Documentação</a>
+      <a href="#">API</a>
+      <a href="#">Privacidade</a>
+      <a href="#">Contato</a>
+    </nav>
+    <div class="footer-bottom">
+      <span class="footer-copy">© 2026 AquaGuard. Todos os direitos reservados.</span>
+      <div class="footer-social">
+        <a href="#" aria-label="LinkedIn"><i data-lucide="linkedin" style="width:15px;height:15px;"></i></a>
+        <a href="#" aria-label="Instagram"><i data-lucide="instagram" style="width:15px;height:15px;"></i></a>
+        <a href="#" aria-label="YouTube"><i data-lucide="youtube" style="width:15px;height:15px;"></i></a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ── Tweaks ─────────────────────────────────────────────── -->
+  <div class="tweaks-panel" id="tweaksPanel">
+    <div class="tweaks-title">
+      Tweaks
+      <button class="tweaks-close" id="tweaksClose">✕</button>
+    </div>
+    <div class="tweaks-body">
+      <div>
+        <p class="tweak-group-label">Fundo da seção statement</p>
+        <div class="tweak-options" id="tweak-statement">
+          <button class="tweak-option active" data-val="#7d9db8">Aço</button>
+          <button class="tweak-option" data-val="#0b2545">Navy</button>
+          <button class="tweak-option" data-val="#8a9a7e">Verde</button>
+          <button class="tweak-option" data-val="#6b7fa0">Ardósia</button>
+        </div>
+      </div>
+      <div>
+        <p class="tweak-group-label">Cor de destaque</p>
+        <div class="tweak-options" style="gap:8px;" id="tweak-accent">
+          <div class="tweak-swatch active" data-val="#20bfc8" style="background:#20bfc8;" title="Ciano"></div>
+          <div class="tweak-swatch" data-val="#1f6fe5" style="background:#1f6fe5;" title="Azul"></div>
+          <div class="tweak-swatch" data-val="#46dcc3" style="background:#46dcc3;" title="Menta"></div>
+          <div class="tweak-swatch" data-val="#1bb892" style="background:#1bb892;" title="Verde"></div>
+        </div>
+      </div>
+      <div>
+        <p class="tweak-group-label">Estilo do hero</p>
+        <div class="tweak-options" id="tweak-hero">
+          <button class="tweak-option active" data-val="sensor">Sensores</button>
+          <button class="tweak-option" data-val="wave">Ondas</button>
+          <button class="tweak-option" data-val="grid">Grade</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    @keyframes grow {
+      from { height: 88%; }
+      to   { height: 95%; }
+    }
+  </style>
+
+  <script>
+    /* ── Lucide icons ───────────────────────────── */
+    lucide.createIcons();
+
+    /* ── Rain canvas on statement ───────────────── */
+    (function () {
+      const rc = document.getElementById('rainCanvas');
+      const rctx = rc.getContext('2d');
+      let rw, rh, rdpr;
+      const drops = [];
+      const splashes = [];
+      const DROP_COUNT = 60;
+
+      function rResize() {
+        rdpr = window.devicePixelRatio || 1;
+        rw = rc.offsetWidth;
+        rh = rc.offsetHeight;
+        rc.width = rw * rdpr;
+        rc.height = rh * rdpr;
+        rctx.scale(rdpr, rdpr);
+      }
+
+      function initDrops() {
+        drops.length = 0;
+        for (let i = 0; i < DROP_COUNT; i++) {
+          drops.push({
+            x: Math.random() * rw,
+            y: Math.random() * rh,
+            len: 10 + Math.random() * 18,
+            speed: 3 + Math.random() * 5,
+            alpha: 0.08 + Math.random() * 0.12,
+            drift: -0.3 - Math.random() * 0.4,
+          });
+        }
+      }
+
+      let waveTime = 0;
+
+      function rDraw() {
+        rctx.clearRect(0, 0, rw, rh);
+
+        /* drops */
+        drops.forEach(d => {
+          rctx.beginPath();
+          rctx.moveTo(d.x, d.y);
+          rctx.lineTo(d.x + d.drift * 2, d.y + d.len);
+          rctx.strokeStyle = `rgba(255,255,255,${d.alpha})`;
+          rctx.lineWidth = 1;
+          rctx.stroke();
+
+          d.y += d.speed;
+          d.x += d.drift;
+
+          if (d.y > rh) {
+            splashes.push({ x: d.x + d.drift * 2, y: rh - 2, r: 0, alpha: 0.2, maxR: 6 + Math.random() * 6 });
+            d.y = -d.len - Math.random() * 40;
+            d.x = Math.random() * rw;
+          }
+        });
+
+        /* splash ripples */
+        for (let i = splashes.length - 1; i >= 0; i--) {
+          const s = splashes[i];
+          s.r += 0.6;
+          s.alpha -= 0.012;
+          if (s.alpha <= 0) { splashes.splice(i, 1); continue; }
+          rctx.beginPath();
+          rctx.arc(s.x, s.y, s.r, Math.PI, 2 * Math.PI);
+          rctx.strokeStyle = `rgba(255,255,255,${s.alpha})`;
+          rctx.lineWidth = 0.75;
+          rctx.stroke();
+        }
+
+        /* water waves at bottom */
+        const waveHeight = rh * 0.25;
+        const waveBaseY = rh - waveHeight;
+        
+        /* Draw multiple wave layers */
+        for (let layer = 0; layer < 3; layer++) {
+          rctx.beginPath();
+          const amp = 8 - layer * 2;
+          const freq = 0.008 + layer * 0.002;
+          const speed = 0.8 + layer * 0.3;
+          const layerY = waveBaseY + layer * 12;
+          
+          for (let x = 0; x <= rw; x += 2) {
+            const y = layerY + Math.sin(x * freq + waveTime * speed) * amp;
+            x === 0 ? rctx.moveTo(x, y) : rctx.lineTo(x, y);
+          }
+          rctx.strokeStyle = `rgba(32,191,200,${0.15 - layer * 0.04})`;
+          rctx.lineWidth = 1.5;
+          rctx.stroke();
+        }
+
+        /* water fill below bottom wave */
+        rctx.beginPath();
+        rctx.moveTo(0, waveBaseY + 36);
+        rctx.lineTo(rw, waveBaseY + 36);
+        rctx.lineTo(rw, rh);
+        rctx.lineTo(0, rh);
+        rctx.closePath();
+        const grad = rctx.createLinearGradient(0, waveBaseY + 36, 0, rh);
+        grad.addColorStop(0, 'rgba(32,191,200,0.08)');
+        grad.addColorStop(1, 'rgba(32,191,200,0.02)');
+        rctx.fillStyle = grad;
+        rctx.fill();
+
+        waveTime += 0.016;
+        requestAnimationFrame(rDraw);
+      }
+
+      rResize();
+      initDrops();
+      window.addEventListener('resize', () => { rResize(); initDrops(); });
+      rDraw();
+    })();
+
+    /* ── Statement scroll-reveal ─────────────────── */
+    (function () {
+      const el = document.getElementById('statementText');
+      const raw = el.textContent;
+      const words = raw.split(/\s+/);
+      el.innerHTML = words.map(w => '<span class="scroll-word">' + w + '</span>').join(' ');
+
+      const spans = el.querySelectorAll('.scroll-word');
+      const total = spans.length;
+
+      function update() {
+        const rect = el.getBoundingClientRect();
+        const vh = window.innerHeight;
+        // progress 0→1 as the section scrolls into view
+        const start = vh * 0.85;
+        const end   = vh * 0.25;
+        const progress = Math.min(1, Math.max(0, (start - rect.top) / (start - end)));
+        const litCount = Math.round(progress * total);
+        spans.forEach((sp, i) => {
+          sp.classList.toggle('lit', i < litCount);
+        });
+      }
+
+      window.addEventListener('scroll', update, { passive: true });
+      update();
+    })();
+
+    /* ── IoT pipeline scroll animation ───────────── */
+    (function () {
+      const pipeline = document.getElementById('pipeline');
+      if (!pipeline) return;
+      const fill = document.getElementById('pipelineFill');
+      const nodes = pipeline.querySelectorAll('.pipeline-node');
+
+      function update() {
+        const rect = pipeline.getBoundingClientRect();
+        const vh = window.innerHeight;
+        const triggerStart = vh * 0.75;   // when top of pipeline crosses this y, progress = 0
+        const triggerEnd = vh * 0.30;     // when bottom of pipeline crosses this y, progress = 1
+        const traveled = triggerStart - rect.top;
+        const total = rect.height + (triggerStart - triggerEnd);
+        const progress = Math.min(1, Math.max(0, traveled / total));
+
+        fill.style.height = (progress * 100) + '%';
+
+        // Activate each node when fill reaches roughly its center
+        nodes.forEach((n, i) => {
+          const nodeCenter = (i + 0.5) / nodes.length;
+          n.classList.toggle('active', progress >= nodeCenter - 0.05);
+        });
+      }
+
+      window.addEventListener('scroll', update, { passive: true });
+      update();
+    })();
+
+    /* ── Nav scroll ─────────────────────────────── */
+    const nav = document.getElementById('nav');
+    function updateNav() {
+      nav.classList.toggle('scrolled', window.scrollY > 60);
+    }
+    window.addEventListener('scroll', updateNav, { passive: true });
+    updateNav();
+
+    /* ── Menu toggle ────────────────────────────── */
+    const menuBtn = document.getElementById('menuBtn');
+    const menuOverlay = document.getElementById('menuOverlay');
+    const menuClose = document.getElementById('menuClose');
+
+    function openMenu() {
+      menuOverlay.classList.add('open');
+      menuBtn.setAttribute('aria-expanded', 'true');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeMenu() {
+      menuOverlay.classList.remove('open');
+      menuBtn.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+    }
+
+    menuBtn.addEventListener('click', openMenu);
+    menuClose.addEventListener('click', closeMenu);
+    menuOverlay.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMenu));
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu(); });
+
+    /* ── Hero canvas (disabled — using video instead) ─────────────────────────────── */
+    if (false) {
+    (function () {
+      const canvas = document.getElementById('heroCanvas');
+      const ctx = canvas.getContext('2d');
+      let w, h, dpr;
+      let heroStyle = 'sensor';
+      let t = 0;
+
+      const sensors = [
+        { x: 0.22, y: 0.40 },
+        { x: 0.62, y: 0.28 },
+        { x: 0.45, y: 0.58 },
+        { x: 0.80, y: 0.50 },
+      ];
+
+      function resize() {
+        dpr = window.devicePixelRatio || 1;
+        w = canvas.offsetWidth;
+        h = canvas.offsetHeight;
+        canvas.width  = w * dpr;
+        canvas.height = h * dpr;
+        ctx.scale(dpr, dpr);
+      }
+
+      function drawSensor() {
+        /* subtle contour lines */
+        for (let i = 0; i < 6; i++) {
+          ctx.beginPath();
+          const baseY = h * (0.18 + i * 0.09);
+          for (let x = 0; x <= w; x += 3) {
+            const y = baseY
+              + Math.sin(x * 0.007 + t * 0.25 + i * 1.1) * 14
+              + Math.sin(x * 0.014 + t * 0.18 + i * 0.6) * 6;
+            x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+          }
+          ctx.strokeStyle = `rgba(32,191,200,${Math.max(0, 0.055 - i * 0.007)})`;
+          ctx.lineWidth = 1;
+          ctx.stroke();
+        }
+
+        /* connection lines */
+        ctx.setLineDash([3, 12]);
+        ctx.lineWidth = 0.75;
+        for (let i = 0; i < sensors.length; i++) {
+          for (let j = i + 1; j < sensors.length; j++) {
+            ctx.beginPath();
+            ctx.moveTo(sensors[i].x * w, sensors[i].y * h);
+            ctx.lineTo(sensors[j].x * w, sensors[j].y * h);
+            ctx.strokeStyle = 'rgba(32,191,200,0.09)';
+            ctx.stroke();
+          }
+        }
+        ctx.setLineDash([]);
+
+        /* sensor pulses */
+        sensors.forEach((s, i) => {
+          const x = s.x * w;
+          const y = s.y * h;
+          const phase = ((t * 0.35 + i * 0.85) % 1);
+
+          if (phase < 0.75) {
+            const r = phase * 90;
+            const a = (1 - phase / 0.75) * 0.28;
+            ctx.beginPath();
+            ctx.arc(x, y, r, 0, Math.PI * 2);
+            ctx.strokeStyle = `rgba(32,191,200,${a})`;
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+          }
+
+          /* glow */
+          const grd = ctx.createRadialGradient(x, y, 0, x, y, 22);
+          grd.addColorStop(0, 'rgba(32,191,200,0.22)');
+          grd.addColorStop(1, 'transparent');
+          ctx.fillStyle = grd;
+          ctx.beginPath(); ctx.arc(x, y, 22, 0, Math.PI * 2); ctx.fill();
+
+          /* dot */
+          ctx.beginPath();
+          ctx.arc(x, y, 3, 0, Math.PI * 2);
+          ctx.fillStyle = '#20bfc8';
+          ctx.fill();
+        });
+      }
+
+      function drawWave() {
+        for (let i = 0; i < 8; i++) {
+          ctx.beginPath();
+          const amp   = 18 + i * 4;
+          const speed = 0.3 + i * 0.04;
+          const baseY = h * (0.20 + i * 0.08);
+          for (let x = 0; x <= w; x += 3) {
+            const y = baseY + Math.sin(x * 0.01 + t * speed + i * 0.9) * amp;
+            x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+          }
+          ctx.strokeStyle = `rgba(32,191,200,${0.07 - i * 0.006})`;
+          ctx.lineWidth = 1;
+          ctx.stroke();
+        }
+      }
+
+      function drawGrid() {
+        const step = 48;
+        ctx.lineWidth = 1;
+        for (let x = 0; x <= w; x += step) {
+          ctx.beginPath();
+          ctx.moveTo(x, 0); ctx.lineTo(x, h);
+          ctx.strokeStyle = 'rgba(32,191,200,0.045)';
+          ctx.stroke();
+        }
+        for (let y = 0; y <= h; y += step) {
+          ctx.beginPath();
+          ctx.moveTo(0, y); ctx.lineTo(w, y);
+          ctx.strokeStyle = 'rgba(32,191,200,0.045)';
+          ctx.stroke();
+        }
+        /* pulsing intersections */
+        const pts = [[0.25,0.35],[0.50,0.55],[0.75,0.30],[0.60,0.65]];
+        pts.forEach((p, i) => {
+          const x = Math.round(p[0] * w / step) * step;
+          const y = Math.round(p[1] * h / step) * step;
+          const r = 3 + Math.sin(t * 1.5 + i * 1.4) * 2;
+          ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(32,191,200,0.5)'; ctx.fill();
+        });
+      }
+
+      function frame() {
+        ctx.clearRect(0, 0, w, h);
+        if (heroStyle === 'sensor') drawSensor();
+        else if (heroStyle === 'wave') drawWave();
+        else drawGrid();
+        t += 0.016;
+        requestAnimationFrame(frame);
+      }
+
+      resize();
+      window.addEventListener('resize', resize);
+      frame();
+
+      window._setHeroStyle = function(s) { heroStyle = s; };
+    })();
+
+    /* ── Sensors canvas background ───────────────── */
+    (function () {
+      const canvas = document.getElementById('sensorsCanvas');
+      const ctx = canvas.getContext('2d');
+      let w, h, dpr;
+      let t = 0;
+
+      const sensorPoints = [
+        { x: 0.15, y: 0.35 },
+        { x: 0.40, y: 0.25 },
+        { x: 0.65, y: 0.45 },
+        { x: 0.85, y: 0.30 },
+        { x: 0.50, y: 0.70 },
+      ];
+
+      function resize() {
+        dpr = window.devicePixelRatio || 1;
+        w = canvas.offsetWidth;
+        h = canvas.offsetHeight;
+        canvas.width  = w * dpr;
+        canvas.height = h * dpr;
+        ctx.scale(dpr, dpr);
+      }
+
+      function frame() {
+        ctx.clearRect(0, 0, w, h);
+
+        /* Flowing data lines */
+        for (let i = 0; i < sensorPoints.length; i++) {
+          for (let j = i + 1; j < sensorPoints.length; j++) {
+            const p1 = sensorPoints[i];
+            const p2 = sensorPoints[j];
+            const x1 = p1.x * w;
+            const y1 = p1.y * h;
+            const x2 = p2.x * w;
+            const y2 = p2.y * h;
+
+            /* Base connection line */
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x2, y2);
+            ctx.strokeStyle = `rgba(32,191,200,0.08)`;
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+
+            /* Animated flowing pulse */
+            const distance = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
+            const pulse = (t * 0.5 + i + j) % distance;
+            const ratio = pulse / distance;
+            const px = x1 + (x2 - x1) * ratio;
+            const py = y1 + (y2 - y1) * ratio;
+            
+            ctx.beginPath();
+            ctx.arc(px, py, 3, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(32,191,200,${0.6 * Math.sin(ratio * Math.PI)})`;
+            ctx.fill();
+          }
+        }
+
+        /* Sensor nodes with glow */
+        sensorPoints.forEach((p, i) => {
+          const x = p.x * w;
+          const y = p.y * h;
+          const phase = ((t * 0.4 + i * 0.8) % 1);
+
+          /* Pulsing rings */
+          if (phase < 0.7) {
+            const r = phase * 50;
+            const a = (1 - phase / 0.7) * 0.25;
+            ctx.beginPath();
+            ctx.arc(x, y, r, 0, Math.PI * 2);
+            ctx.strokeStyle = `rgba(32,191,200,${a})`;
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+          }
+
+          /* Core glow */
+          const grd = ctx.createRadialGradient(x, y, 0, x, y, 18);
+          grd.addColorStop(0, 'rgba(32,191,200,0.18)');
+          grd.addColorStop(1, 'transparent');
+          ctx.fillStyle = grd;
+          ctx.beginPath();
+          ctx.arc(x, y, 18, 0, Math.PI * 2);
+          ctx.fill();
+
+          /* Center dot */
+          ctx.beginPath();
+          ctx.arc(x, y, 2.5, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(32,191,200,0.8)';
+          ctx.fill();
+        });
+
+        t += 0.016;
+        requestAnimationFrame(frame);
+      }
+
+      resize();
+      window.addEventListener('resize', resize);
+      frame();
+    })();
+    }
+
+    /* ── Tweaks panel ────────────────────────────── */
+    const tweaksPanel = document.getElementById('tweaksPanel');
+    const tweaksClose = document.getElementById('tweaksClose');
+
+    tweaksClose.addEventListener('click', () => {
+      tweaksPanel.classList.remove('open');
+      window.parent.postMessage({ type: '__edit_mode_dismissed' }, '*');
+    });
+
+    window.addEventListener('message', e => {
+      if (e.data?.type === '__activate_edit_mode')   tweaksPanel.classList.add('open');
+      if (e.data?.type === '__deactivate_edit_mode') tweaksPanel.classList.remove('open');
+    });
+    window.parent.postMessage({ type: '__edit_mode_available' }, '*');
+
+    /* Statement bg */
+    document.getElementById('tweak-statement').querySelectorAll('button').forEach(btn => {
+      btn.addEventListener('click', function () {
+        document.getElementById('tweak-statement').querySelectorAll('button').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        document.documentElement.style.setProperty('--statement-bg', this.dataset.val);
+        window.parent.postMessage({ type: '__edit_mode_set_keys', edits: { statementBg: this.dataset.val } }, '*');
+      });
+    });
+
+    /* Accent color */
+    document.getElementById('tweak-accent').querySelectorAll('.tweak-swatch').forEach(sw => {
+      sw.addEventListener('click', function () {
+        document.getElementById('tweak-accent').querySelectorAll('.tweak-swatch').forEach(s => s.classList.remove('active'));
+        this.classList.add('active');
+        document.documentElement.style.setProperty('--accent', this.dataset.val);
+        document.documentElement.style.setProperty('--cyan-500', this.dataset.val);
+        document.documentElement.style.setProperty('--cyan-400', this.dataset.val);
+        document.documentElement.style.setProperty('--cyan-600', this.dataset.val);
+        window.parent.postMessage({ type: '__edit_mode_set_keys', edits: { accentColor: this.dataset.val } }, '*');
+      });
+    });
+
+    /* ── Mapbox simulation map ───────────────────── */
+    (function () {
+      if (typeof mapboxgl === 'undefined') return;
+      mapboxgl.accessToken = 'pk.eyJ1IjoiZGFuaWVscmliZWlyb2RldiIsImEiOiJjbXBuNTVuYWkyYWlmMnNvbDIwYXpqd2w3In0.wdppNjzE3diMLa8cwu7EaQ';
+
+      const map = new mapboxgl.Map({
+        container: 'simulationMap',
+        style: 'mapbox://styles/mapbox/dark-v11',
+        center: [-46.6333, -23.535],
+        zoom: 19,
+        pitch: 60,
+        bearing: -30,
+        interactive: false,
+      });
+
+      map.addControl(new mapboxgl.NavigationControl({ showCompass: false }), 'bottom-right');
+
+      /* Scroll-driven zoom: 19 → 16 as feature section passes through viewport */
+      let _rafPending = false;
+      function updateMapZoom() {
+        if (_rafPending) return;
+        _rafPending = true;
+        requestAnimationFrame(() => {
+          _rafPending = false;
+          const section = document.querySelector('.feature');
+          if (!section) return;
+          const rect = section.getBoundingClientRect();
+          const vh = window.innerHeight;
+          const progress = Math.min(1, Math.max(0, -rect.top / (rect.height - vh)));
+          const zoom = 19 - progress * 3; // 19 → 16
+          map.easeTo({ zoom, duration: 120, easing: t => t });
+        });
+      }
+      window.addEventListener('scroll', updateMapZoom, { passive: true });
+      updateMapZoom();
+
+      map.on('load', () => {
+        /* 3D buildings */
+        map.addLayer({
+          id: 'buildings-3d',
+          source: 'composite',
+          'source-layer': 'building',
+          filter: ['==', 'extrude', 'true'],
+          type: 'fill-extrusion',
+          minzoom: 12,
+          paint: {
+            'fill-extrusion-color': '#0d1f3c',
+            'fill-extrusion-height': ['get', 'height'],
+            'fill-extrusion-base': ['get', 'min_height'],
+            'fill-extrusion-opacity': 0.85,
+          }
+        });
+
+        /* Flood zones — concentric octagonal rings */
+
+        /* RED — 0 to 250m */
+        map.addSource('flood-red', {
+          type: 'geojson',
+          data: { type: 'Feature', geometry: { type: 'Polygon', coordinates: [[
+            [-46.6333, -23.5328],
+            [-46.6316, -23.5334],
+            [-46.6308, -23.5350],
+            [-46.6316, -23.5366],
+            [-46.6333, -23.5372],
+            [-46.6350, -23.5366],
+            [-46.6358, -23.5350],
+            [-46.6350, -23.5334],
+            [-46.6333, -23.5328],
+          ]] } }
+        });
+        map.addLayer({ id: 'flood-red-fill', type: 'fill', source: 'flood-red',
+          paint: { 'fill-color': '#d63a3a', 'fill-opacity': 0.35 } });
+        map.addLayer({ id: 'flood-red-line', type: 'line', source: 'flood-red',
+          paint: { 'line-color': '#ef5050', 'line-width': 1.5, 'line-opacity': 0.9 } });
+
+        /* YELLOW — 250m to 300m ring */
+        map.addSource('flood-yellow', {
+          type: 'geojson',
+          data: { type: 'Feature', geometry: { type: 'Polygon', coordinates: [
+            /* outer 300m */
+            [
+              [-46.6333, -23.5323],
+              [-46.6312, -23.5331],
+              [-46.6304, -23.5350],
+              [-46.6312, -23.5369],
+              [-46.6333, -23.5377],
+              [-46.6354, -23.5369],
+              [-46.6362, -23.5350],
+              [-46.6354, -23.5331],
+              [-46.6333, -23.5323],
+            ],
+            /* hole 250m (reversed) */
+            [
+              [-46.6333, -23.5328],
+              [-46.6350, -23.5334],
+              [-46.6358, -23.5350],
+              [-46.6350, -23.5366],
+              [-46.6333, -23.5372],
+              [-46.6316, -23.5366],
+              [-46.6308, -23.5350],
+              [-46.6316, -23.5334],
+              [-46.6333, -23.5328],
+            ],
+          ] } }
+        });
+        map.addLayer({ id: 'flood-yellow-fill', type: 'fill', source: 'flood-yellow',
+          paint: { 'fill-color': '#f1b50a', 'fill-opacity': 0.30 } });
+        map.addLayer({ id: 'flood-yellow-line', type: 'line', source: 'flood-yellow',
+          paint: { 'line-color': '#f1b50a', 'line-width': 1.2, 'line-opacity': 0.8 } });
+
+        /* GREEN — 300m to 500m ring */
+        map.addSource('flood-green', {
+          type: 'geojson',
+          data: { type: 'Feature', geometry: { type: 'Polygon', coordinates: [
+            /* outer 500m */
+            [
+              [-46.6333, -23.5305],
+              [-46.6298, -23.5318],
+              [-46.6284, -23.5350],
+              [-46.6298, -23.5382],
+              [-46.6333, -23.5395],
+              [-46.6368, -23.5382],
+              [-46.6382, -23.5350],
+              [-46.6368, -23.5318],
+              [-46.6333, -23.5305],
+            ],
+            /* hole 300m (reversed) */
+            [
+              [-46.6333, -23.5323],
+              [-46.6354, -23.5331],
+              [-46.6362, -23.5350],
+              [-46.6354, -23.5369],
+              [-46.6333, -23.5377],
+              [-46.6312, -23.5369],
+              [-46.6304, -23.5350],
+              [-46.6312, -23.5331],
+              [-46.6333, -23.5323],
+            ],
+          ] } }
+        });
+        map.addLayer({ id: 'flood-green-fill', type: 'fill', source: 'flood-green',
+          paint: { 'fill-color': '#1bb892', 'fill-opacity': 0.25 } });
+        map.addLayer({ id: 'flood-green-line', type: 'line', source: 'flood-green',
+          paint: { 'line-color': '#1bb892', 'line-width': 1.2, 'line-opacity': 0.7 } });
+
+        /* Sensor marker */
+        const el = document.createElement('div');
+        el.style.cssText = `
+          width:12px; height:12px; border-radius:50%;
+          background:#20bfc8; border:2px solid #fff;
+          box-shadow:0 0 0 4px rgba(32,191,200,0.3);
+        `;
+        new mapboxgl.Marker({ element: el })
+          .setLngLat([-46.6333, -23.535])
+          .addTo(map);
+      });
+    })();
+
+    /* ── CTA rain + wave canvas ──────────────────── */
+    (function () {
+      const cc = document.getElementById('ctaCanvas');
+      if (!cc) return;
+      const ctx = cc.getContext('2d');
+      let cw, ch, dpr;
+      const drops = [];
+      const splashes = [];
+      const DROP_COUNT = 30;
+      let wt = 0;
+
+      function resize() {
+        dpr = window.devicePixelRatio || 1;
+        cw = cc.offsetWidth;
+        ch = cc.offsetHeight;
+        cc.width = cw * dpr;
+        cc.height = ch * dpr;
+        ctx.scale(dpr, dpr);
+        drops.length = 0;
+        for (let i = 0; i < DROP_COUNT; i++) {
+          drops.push({
+            x: Math.random() * cw,
+            y: Math.random() * ch,
+            len: 10 + Math.random() * 18,
+            speed: 3 + Math.random() * 5,
+            alpha: 0.06 + Math.random() * 0.10,
+            drift: -0.3 - Math.random() * 0.4,
+          });
+        }
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, cw, ch);
+
+        /* rain drops */
+        drops.forEach(d => {
+          ctx.beginPath();
+          ctx.moveTo(d.x, d.y);
+          ctx.lineTo(d.x + d.drift * 2, d.y + d.len);
+          ctx.strokeStyle = `rgba(255,255,255,${d.alpha})`;
+          ctx.lineWidth = 1;
+          ctx.stroke();
+          d.y += d.speed; d.x += d.drift;
+          if (d.y > ch) {
+            splashes.push({ x: d.x, y: ch - 2, r: 0, alpha: 0.18, maxR: 5 + Math.random() * 5 });
+            d.y = -d.len - Math.random() * 40;
+            d.x = Math.random() * cw;
+          }
+        });
+
+        /* splash ripples */
+        for (let i = splashes.length - 1; i >= 0; i--) {
+          const s = splashes[i];
+          s.r += 0.6; s.alpha -= 0.013;
+          if (s.alpha <= 0) { splashes.splice(i, 1); continue; }
+          ctx.beginPath();
+          ctx.arc(s.x, s.y, s.r, Math.PI, 2 * Math.PI);
+          ctx.strokeStyle = `rgba(255,255,255,${s.alpha})`;
+          ctx.lineWidth = 0.75;
+          ctx.stroke();
+        }
+
+        /* waves at the bottom of this canvas (= top of CTA section) */
+        for (let layer = 0; layer < 3; layer++) {
+          ctx.beginPath();
+          const amp = 6 - layer * 1.5;
+          const freq = 0.009 + layer * 0.002;
+          const speed = 0.7 + layer * 0.25;
+          const baseY = ch - 20 + layer * 8;
+          for (let x = 0; x <= cw; x += 2) {
+            const y = baseY + Math.sin(x * freq + wt * speed) * amp;
+            x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+          }
+          ctx.strokeStyle = `rgba(32,191,200,${0.14 - layer * 0.04})`;
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+        }
+
+        /* gradient fill below waves */
+        ctx.beginPath();
+        ctx.rect(0, ch - 12, cw, 12);
+        const grad = ctx.createLinearGradient(0, ch - 12, 0, ch);
+        grad.addColorStop(0, 'rgba(32,191,200,0.07)');
+        grad.addColorStop(1, 'rgba(32,191,200,0.02)');
+        ctx.fillStyle = grad;
+        ctx.fill();
+
+        wt += 0.016;
+        requestAnimationFrame(draw);
+      }
+
+      resize();
+      window.addEventListener('resize', resize);
+      draw();
+    })();
+
+    /* Hero style (disabled — using video instead) */
+    if (false) {
+    document.getElementById('tweak-hero').querySelectorAll('button').forEach(btn => {
+      btn.addEventListener('click', function () {
+        document.getElementById('tweak-hero').querySelectorAll('button').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        window._setHeroStyle && window._setHeroStyle(this.dataset.val);
+        window.parent.postMessage({ type: '__edit_mode_set_keys', edits: { heroStyle: this.dataset.val } }, '*');
+      });
+    });
+    }
+  </script>
+
+</body>
+</html>

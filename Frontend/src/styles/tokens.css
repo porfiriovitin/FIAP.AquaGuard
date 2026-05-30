@@ -1,0 +1,327 @@
+/* ============================================================
+   AquaGuard — Colors & Type
+   Plataforma inteligente de monitoramento e simulação
+   de risco de enchentes.
+   ============================================================ */
+
+
+:root {
+  /* ============================================================
+     COLOR — Brand
+     Pulled directly from the AquaGuard logo. Navy is the
+     identity anchor; cyan + mint are the "live signal" accents.
+     ============================================================ */
+
+  /* Navy (primary identity) */
+  --navy-950: #061a33;
+  --navy-900: #0b2545;     /* wordmark / deepest surfaces */
+  --navy-800: #14365e;     /* logo outline, sidebars */
+  --navy-700: #1a4a7e;
+  --navy-600: #21609d;
+  --navy-500: #2c79bf;
+
+  /* Blue (action / hyperlinks / data plots) */
+  --blue-700: #1455c0;
+  --blue-600: #1f6fe5;     /* primary CTA */
+  --blue-500: #3b82f6;
+  --blue-400: #6fa8f5;
+  --blue-300: #a8c8f8;
+  --blue-100: #e4eefd;
+  --blue-50:  #f1f6fe;
+
+  /* Cyan / Teal (live data, sensor heartbeat) */
+  --cyan-700: #0f8a93;
+  --cyan-600: #149aa4;
+  --cyan-500: #20bfc8;
+  --cyan-400: #2dd4d4;
+  --cyan-300: #6ee5e0;
+  --cyan-100: #d0f5f3;
+  --cyan-50:  #ecfbfa;
+
+  /* Mint (positive deltas, recovery) */
+  --mint-500: #1bb892;
+  --mint-400: #46dcc3;
+  --mint-300: #8aeed7;
+  --mint-100: #d6f6ec;
+
+  /* ============================================================
+     COLOR — Neutrals
+     Cool-tinted slates that read calm against the navy.
+     ============================================================ */
+  --ink-950: #050b15;
+  --ink-900: #0d1726;      /* body text on white */
+  --ink-700: #2a3a52;
+  --ink-600: #475672;      /* secondary text */
+  --ink-500: #677694;      /* tertiary text */
+  --ink-400: #94a1ba;
+  --ink-300: #c2cad8;
+  --ink-200: #dde3ec;
+  --ink-150: #e7ecf3;
+  --ink-100: #f1f4f9;
+  --ink-50:  #f7f9fc;
+  --white:   #ffffff;
+
+  /* ============================================================
+     COLOR — Semantic (alerts are core to the product)
+     Risk levels map to flood-monitoring categories used
+     by Brazilian civil defense (Defesa Civil).
+     ============================================================ */
+  --risk-critical:        #d63a3a;   /* Crítico / vermelho */
+  --risk-critical-tint:   #fde6e6;
+  --risk-high:            #ef7a1a;   /* Alto / laranja */
+  --risk-high-tint:       #fdecd7;
+  --risk-moderate:        #f1b50a;   /* Moderado / amarelo */
+  --risk-moderate-tint:   #fdf4d2;
+  --risk-low:             #1bb892;   /* Baixo / verde-menta */
+  --risk-low-tint:        #d6f6ec;
+  --risk-normal:          #2c79bf;   /* Normal / azul */
+  --risk-normal-tint:     #e4eefd;
+
+  /* Status tokens (mirror risk but named for UI state) */
+  --success: var(--mint-500);
+  --warning: var(--risk-moderate);
+  --danger:  var(--risk-critical);
+  --info:    var(--blue-600);
+
+  /* ============================================================
+     COLOR — Surfaces & semantic UI tokens
+     ============================================================ */
+  --bg:            var(--ink-50);
+  --bg-elevated:   var(--white);
+  --bg-sunken:     var(--ink-100);
+  --bg-inverse:    var(--navy-900);
+
+  --fg:            var(--ink-900);     /* primary text */
+  --fg-muted:      var(--ink-600);     /* secondary text */
+  --fg-subtle:     var(--ink-500);     /* tertiary text */
+  --fg-onDark:     #eaf2ff;
+  --fg-onDarkMuted:#9fb4d4;
+
+  --border:        var(--ink-200);
+  --border-strong: var(--ink-300);
+  --border-onDark: #1d3a63;
+
+  --accent:        var(--blue-600);
+  --accent-hover:  var(--blue-700);
+  --accent-press:  #103e8f;
+
+  /* Live/signal accent — for streaming data, pulses, telemetry */
+  --signal:        var(--cyan-500);
+  --signal-soft:   var(--cyan-100);
+
+  /* ============================================================
+     RADII
+     Soft but disciplined. The brand reads as engineered, not playful.
+     ============================================================ */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+  --radius-2xl: 28px;
+  --radius-pill: 999px;
+
+  /* ============================================================
+     SHADOWS — two systems
+     "elev" = neutral elevation
+     "ring" = focus / sensor pulse (brand cyan)
+     ============================================================ */
+  --shadow-xs: 0 1px 2px rgba(11, 37, 69, 0.06);
+  --shadow-sm: 0 1px 2px rgba(11, 37, 69, 0.06), 0 1px 3px rgba(11, 37, 69, 0.05);
+  --shadow-md: 0 4px 12px -2px rgba(11, 37, 69, 0.10), 0 2px 4px rgba(11, 37, 69, 0.04);
+  --shadow-lg: 0 16px 40px -12px rgba(11, 37, 69, 0.18), 0 4px 10px rgba(11, 37, 69, 0.06);
+  --shadow-xl: 0 28px 60px -20px rgba(11, 37, 69, 0.30);
+
+  --ring-focus: 0 0 0 3px rgba(31, 111, 229, 0.30);
+  --ring-signal:0 0 0 4px rgba(32, 191, 200, 0.22);
+  --ring-danger:0 0 0 3px rgba(214, 58, 58, 0.25);
+
+  /* Inner shadow for inset wells (charts, map containers) */
+  --inset-soft: inset 0 1px 0 rgba(11, 37, 69, 0.04);
+
+  /* ============================================================
+     SPACING — 4px base
+     ============================================================ */
+  --s-0: 0;
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 20px;
+  --s-6: 24px;
+  --s-8: 32px;
+  --s-10: 40px;
+  --s-12: 48px;
+  --s-16: 64px;
+  --s-20: 80px;
+  --s-24: 96px;
+
+  /* ============================================================
+     TYPE — families
+     - Display: Sora (geometric, slightly engineered character)
+     - Body/UI: DM Sans (calm, legible, neutral)
+     - Mono: JetBrains Mono (telemetry, coordinates, sensor IDs)
+     ============================================================ */
+  --font-display: 'Sora', 'Segoe UI', system-ui, sans-serif;
+  --font-sans:    'DM Sans', 'Segoe UI', system-ui, sans-serif;
+  --font-mono:    'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+  /* Weights */
+  --w-regular: 400;
+  --w-medium:  500;
+  --w-semibold:600;
+  --w-bold:    700;
+  --w-extra:   800;
+
+  /* Sizes (modular, 1.20 ratio bias) */
+  --t-eyebrow:  12px;   /* uppercase labels */
+  --t-caption:  13px;
+  --t-body-sm:  14px;
+  --t-body:     15px;
+  --t-body-lg:  17px;
+  --t-h6:       18px;
+  --t-h5:       20px;
+  --t-h4:       24px;
+  --t-h3:       30px;
+  --t-h2:       40px;
+  --t-h1:       56px;
+  --t-hero:     76px;
+
+  /* Line-heights */
+  --lh-tight: 1.08;
+  --lh-snug:  1.22;
+  --lh-base:  1.5;
+  --lh-relaxed: 1.65;
+
+  /* Tracking */
+  --tr-tight:  -0.02em;
+  --tr-tighter:-0.035em;     /* display headings */
+  --tr-normal: 0;
+  --tr-wide:   0.04em;
+  --tr-eyebrow:0.12em;       /* uppercase eyebrows */
+}
+
+/* ============================================================
+   SEMANTIC TYPE — drop-in classes / element defaults
+   ============================================================ */
+body {
+  font-family: var(--font-sans);
+  font-size: var(--t-body);
+  line-height: var(--lh-base);
+  color: var(--fg);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.t-hero, h1.hero {
+  font-family: var(--font-display);
+  font-weight: var(--w-extra);
+  font-size: var(--t-hero);
+  line-height: var(--lh-tight);
+  letter-spacing: var(--tr-tighter);
+  color: var(--navy-900);
+  text-wrap: balance;
+}
+
+.t-h1, h1 {
+  font-family: var(--font-display);
+  font-weight: var(--w-bold);
+  font-size: var(--t-h1);
+  line-height: var(--lh-tight);
+  letter-spacing: var(--tr-tighter);
+  color: var(--navy-900);
+  text-wrap: balance;
+}
+
+.t-h2, h2 {
+  font-family: var(--font-display);
+  font-weight: var(--w-bold);
+  font-size: var(--t-h2);
+  line-height: var(--lh-snug);
+  letter-spacing: var(--tr-tight);
+  color: var(--navy-900);
+  text-wrap: balance;
+}
+
+.t-h3, h3 {
+  font-family: var(--font-display);
+  font-weight: var(--w-semibold);
+  font-size: var(--t-h3);
+  line-height: var(--lh-snug);
+  letter-spacing: var(--tr-tight);
+  color: var(--navy-900);
+}
+
+.t-h4, h4 {
+  font-family: var(--font-display);
+  font-weight: var(--w-semibold);
+  font-size: var(--t-h4);
+  line-height: var(--lh-snug);
+  color: var(--navy-900);
+}
+
+.t-h5, h5 {
+  font-family: var(--font-sans);
+  font-weight: var(--w-semibold);
+  font-size: var(--t-h5);
+  line-height: var(--lh-snug);
+  color: var(--navy-900);
+}
+
+.t-h6, h6 {
+  font-family: var(--font-sans);
+  font-weight: var(--w-semibold);
+  font-size: var(--t-h6);
+  line-height: var(--lh-snug);
+  color: var(--navy-900);
+}
+
+.t-body-lg {
+  font-size: var(--t-body-lg);
+  line-height: var(--lh-relaxed);
+  color: var(--fg-muted);
+  text-wrap: pretty;
+}
+
+.t-body, p {
+  font-size: var(--t-body);
+  line-height: var(--lh-relaxed);
+  color: var(--fg);
+  text-wrap: pretty;
+}
+
+.t-caption {
+  font-size: var(--t-caption);
+  line-height: var(--lh-base);
+  color: var(--fg-muted);
+}
+
+.t-eyebrow {
+  font-family: var(--font-sans);
+  font-size: var(--t-eyebrow);
+  font-weight: var(--w-semibold);
+  letter-spacing: var(--tr-eyebrow);
+  text-transform: uppercase;
+  color: var(--cyan-600);
+}
+
+.t-mono {
+  font-family: var(--font-mono);
+  font-feature-settings: "tnum" 1;
+}
+
+.t-num {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+/* Code / sensor readings */
+code, .code {
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+  background: var(--ink-100);
+  padding: 0.1em 0.35em;
+  border-radius: var(--radius-xs);
+  color: var(--navy-800);
+}

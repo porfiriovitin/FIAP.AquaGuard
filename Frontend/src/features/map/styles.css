@@ -1,0 +1,11 @@
+/*
+ * Mapbox UI overrides.
+ *
+ * ⚠️  Mapbox ToS (Free/Pro plans) requires the wordmark logo and attribution
+ * to remain visible. Hiding them violates the terms — use only for internal
+ * prototyping/demo. Re-enable before public release.
+ */
+.mapboxgl-ctrl-logo,
+.mapboxgl-ctrl-attrib {
+  display: none !important;
+}

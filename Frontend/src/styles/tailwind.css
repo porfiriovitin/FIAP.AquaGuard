@@ -1,0 +1,21 @@
+@import "tailwindcss";
+
+/* Custom animations registered as Tailwind utilities */
+@theme {
+  --animate-pulse-signal: ag-pulse 2s infinite;
+  --animate-pulse-crit:   ag-pulse-crit 2s infinite;
+  --animate-ping-crit:    ag-ping 2s infinite;
+}
+
+@keyframes ag-pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(32, 191, 200, 0.55); }
+  100% { box-shadow: 0 0 0 10px rgba(32, 191, 200, 0); }
+}
+@keyframes ag-pulse-crit {
+  0%   { box-shadow: 0 0 0 0 rgba(214, 58, 58, 0.55); }
+  100% { box-shadow: 0 0 0 10px rgba(214, 58, 58, 0); }
+}
+@keyframes ag-ping {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(214, 58, 58, 0.5); }
+  60%      { box-shadow: 0 0 0 14px rgba(214, 58, 58, 0); }
+}
