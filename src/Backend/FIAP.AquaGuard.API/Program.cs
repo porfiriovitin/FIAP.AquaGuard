@@ -2,8 +2,11 @@ using DotNetEnv;
 using FIAP.AquaGuard.API.Filters;
 using FIAP.AquaGuard.API.Infra.Authentication;
 using FIAP.AquaGuard.Application;
+using FIAP.AquaGuard.Domain.Models;
 using FIAP.AquaGuard.Infrastructure;
 using FIAP.AquaGuard.Infrastructure.Options;
+using FIAP.AquaGuard.Infrastructure.Services;
+using FIAP.AquaGuard.Infrastructure.Services.OpenMeteo;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.IdentityModel.Tokens;
@@ -11,6 +14,7 @@ using Scalar.AspNetCore;
 using System.Globalization;
 using System.Security.Claims;
 using System.Text;
+using System.Threading.RateLimiting;
 
 /// :: Helper method to find the .env file by traversing up the directory tree.
 static string FindEnvFile()
@@ -29,6 +33,7 @@ static string FindEnvFile()
 
     throw new FileNotFoundException("Arquivo .env não encontrado.");
 }
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -114,6 +119,7 @@ builder.Services.AddControllers(options =>
     options.Filters.Add<ExceptionFilter>();
 });
 
+/// :: Global Rate Limiter.
 builder.Services.AddRateLimiter(options =>
 {
     options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;

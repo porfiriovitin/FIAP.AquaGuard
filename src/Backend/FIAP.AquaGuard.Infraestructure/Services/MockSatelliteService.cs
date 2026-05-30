@@ -55,7 +55,7 @@ public class MockSatelliteService : ISatelliteProvider
             WaterPercentage: waterPercentage,
             ImageData: null,
             AmountOfImagesFound: amountOfImagesFound,
-            DataSource: "open-meteo+mock-satellite"
+            DataSource: "sentinel-1"
         );
     }
 
