@@ -4,6 +4,7 @@ using System.Globalization;
 
 namespace FIAP.AquaGuard.Infrastructure.Services;
 
+/// [FIAP allowed us to mock complex integrations due the few time we had to implement the project, so this service simulates a satellite provider by using data from Open-Meteo to create a water detection result. It's not based on real satellite data, but it combines weather forecasts and elevation data to generate a plausible water detection result for demonstration purposes.] 
 public class MockSatelliteService : ISatelliteProvider
 {
     private readonly IOpenMeteoProvider _openMeteoProvider;
