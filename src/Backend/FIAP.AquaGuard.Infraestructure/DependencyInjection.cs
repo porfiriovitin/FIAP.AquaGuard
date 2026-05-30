@@ -48,9 +48,11 @@ public static class DependencyInjection
 
         services.AddHttpClient<IOpenMeteoProvider, OpenMeteoService>(client =>
         {
-            client.Timeout = TimeSpan.FromSeconds(10);
+            client.Timeout = TimeSpan.FromSeconds(30);
         })
         .AddStandardResilienceHandler();
+
+        services.AddScoped<ISatelliteProvider, MockSatelliteService>();
 
 
         return services;

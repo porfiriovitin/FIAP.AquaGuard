@@ -1,8 +1,7 @@
-﻿using FIAP.AquaGuard.Application.Features.Auth.Register;
-using Microsoft.AspNetCore.Mvc;
-using FIAP.Aquaguard.Application.Features.Auth.Login;
-using FIAP.Aquaguard.Application.Shared.Responses;
+﻿using FIAP.Aquaguard.Application.Shared.Responses;
+using FIAP.AquaGuard.Application.Features.Auth.Register;
 using FIAP.AquaGuard.Application.Shared.Responses;
+using Microsoft.AspNetCore.Mvc;
 
 namespace FIAP.AquaGuard.API.Controllers;
 
