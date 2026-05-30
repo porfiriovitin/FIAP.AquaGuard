@@ -3,15 +3,11 @@ using FIAP.Aquaguard.Application.Abstractions.Authentication;
 using FIAP.AquaGuard.API.Filters;
 using FIAP.AquaGuard.API.Infra.Authentication;
 using FIAP.AquaGuard.Application;
-using FIAP.AquaGuard.Domain.Models;
 using FIAP.AquaGuard.Infrastructure;
 using FIAP.AquaGuard.Infrastructure.Options;
-using FIAP.AquaGuard.Infrastructure.Services;
-using FIAP.AquaGuard.Infrastructure.Services.OpenMeteo;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.IdentityModel.Tokens;
-using Scalar.AspNetCore;
 using System.Globalization;
 using System.Security.Claims;
 using System.Text;
@@ -93,7 +89,6 @@ builder.Services.AddAuthorizationBuilder()
         policy.RequireAuthenticatedUser());
 
 /// :: Add services to the container.
-builder.Services.AddOpenApi();
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 
@@ -138,12 +133,15 @@ builder.Services.AddRateLimiter(options =>
             }));
 });
 
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
-    app.MapScalarApiReference();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();

@@ -1,7 +1,9 @@
-﻿using FIAP.AquaGuard.Infrastructure.Persistence;
-using FIAP.AquaGuard.Domain.Entities;
+﻿using FIAP.AquaGuard.Domain.Entities;
+using FIAP.AquaGuard.Domain.Models;
 using FIAP.AquaGuard.Domain.Repositories;
+using FIAP.AquaGuard.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
+using System.Globalization;
 
 namespace FIAP.AquaGuard.Infrastructure.Persistence.Repositories;
 
@@ -34,6 +36,16 @@ class CityRepository : ICityRepository
         var items = await _context.Cities.AsNoTracking().OrderBy(c => c.Id).Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
 
         return (items, total);
+    }
+
+    public async Task<City?> GetByCoordinates(Coordinates coordinates)
+    {
+        var latitude = coordinates.Latitude.ToString(CultureInfo.InvariantCulture);
+        var longitude = coordinates.Longitude.ToString(CultureInfo.InvariantCulture);
+
+        var city = await _context.Cities.Where(y => y.Latitude.ToString(CultureInfo.InvariantCulture) == latitude && y.Longitude.ToString(CultureInfo.InvariantCulture) == longitude).FirstOrDefaultAsync();
+
+        return city;
     }
 
     public async Task<City?> GetByIdAsync(Guid id)

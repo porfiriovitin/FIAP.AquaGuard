@@ -63,7 +63,7 @@ public class UserController : ControllerBase
     }
 
     [Authorize(Policy = "ManagerOrAdmin")]
-    [HttpGet("/{cityId: guid?}/{page:int?}/{pageSize:int?}")]
+    [HttpGet("{cityId:guid?}/{page:int?}/{pageSize:int?}")]
     [ProducesResponseType(typeof(PayloadResponse<ResponseUsers>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(PayloadResponse<object>), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetUser([FromRoute] Guid? cityId, int page = 1, int pageSize = 10)
