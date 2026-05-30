@@ -1,7 +1,7 @@
 using FIAP.AquaGuard.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace Fiap.AquaGuard.Infrastructure.Persistence;
+namespace FIAP.AquaGuard.Infrastructure.Persistence;
 
 public class AppDbContext : DbContext
 {

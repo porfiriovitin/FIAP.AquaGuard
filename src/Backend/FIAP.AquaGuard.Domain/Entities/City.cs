@@ -11,6 +11,7 @@ public class City
     public Guid? ResponsibleUserId { get; private set; }
     public DateTimeOffset CreatedAt { get; private set; }
     public DateTimeOffset? UpdatedAt { get; private set; }
+    public short IsPaidPlan { get; private set; }
 
     public User? ResponsibleUser { get; private set; }
 
@@ -45,12 +46,12 @@ public class City
         Latitude = latitude;
         Longitude = longitude;
         CreatedAt = DateTimeOffset.UtcNow;
+        IsPaidPlan = 0;
     }
 
     public void AssignResponsibleUser(User user)
     {
-        if (user is null)
-            throw new ArgumentNullException(nameof(user));
+        ArgumentNullException.ThrowIfNull(user);
 
         ResponsibleUserId = user.Id;
         ResponsibleUser = user;
@@ -69,4 +70,11 @@ public class City
         Longitude = longitude;
         UpdatedAt = DateTimeOffset.UtcNow;
     }
+
+    public void BecomePaidPlan()
+    {
+        IsPaidPlan = 1;
+        UpdatedAt = DateTimeOffset.UtcNow;
+    }
+
 }

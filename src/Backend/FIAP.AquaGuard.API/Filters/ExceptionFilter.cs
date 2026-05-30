@@ -28,6 +28,10 @@ namespace FIAP.AquaGuard.API.Filters
                     context.HttpContext.Response.StatusCode = StatusCodes.Status401Unauthorized;
                     context.Result = new UnauthorizedObjectResult(payload);
                     break;
+                case OpenMeteoException:
+                    context.HttpContext.Response.StatusCode = StatusCodes.Status503ServiceUnavailable;
+                    context.Result = new ObjectResult(payload);
+                    break;
                 default:
                     context.HttpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
                     context.Result = new ObjectResult(new PayloadResponse<object>

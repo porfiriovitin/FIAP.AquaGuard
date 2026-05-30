@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using FIAP.Aquaguard.Application.Features.Auth.Login;
 using FIAP.Aquaguard.Application.Shared.Responses;
+using FIAP.AquaGuard.Application.Shared.Responses;
 
 namespace FIAP.AquaGuard.API.Controllers;
 
@@ -21,9 +22,13 @@ public class UserController : ControllerBase
     [ProducesResponseType(typeof(PayloadResponse<object>), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Register([FromBody] RequestRegisterUser request)
     {
-        PayloadResponse<ResponseRegisteredUser> result = await _useCase.ExecuteAsync(request);
+        ResponseRegisteredUser result = await _useCase.ExecuteAsync(request);
 
-        return StatusCode(StatusCodes.Status201Created, result);
+        return StatusCode(StatusCodes.Status201Created, new PayloadResponse<ResponseRegisteredUser> { 
+            Status = nameof(ResponseStatus.Success), 
+            Message = "Usuário registrado com sucesso.", 
+            Data = result 
+        });
     }
 
 }

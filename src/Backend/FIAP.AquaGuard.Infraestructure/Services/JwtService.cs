@@ -1,5 +1,7 @@
 ﻿using FIAP.AquaGuard.Domain.Entities;
 using FIAP.AquaGuard.Domain.Services;
+using FIAP.AquaGuard.Infrastructure.Options;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -9,12 +11,19 @@ namespace FIAP.AquaGuard.Infrastructure.Services;
 
 public class JwtService : ITokenProvider
 {
+    private readonly JwtOptions _jwtOptions;
+
+    public JwtService(IOptions<JwtOptions> jwtOptions)
+    {
+        _jwtOptions = jwtOptions.Value;
+    }
+
+    /// <summary>
+    /// Generates JWT token.
+    /// </summary>
     public string GenerateToken(User user)
     {
-        var key = Environment.GetEnvironmentVariable("JWT_SECRET_KEY")!;
-        var issuer = Environment.GetEnvironmentVariable("JWT_ISSUER")!;
-        var audience = Environment.GetEnvironmentVariable("JWT_AUDIENCE")!;
-
+        /// :: Build the claims for the token, including user ID, email, and role.
         var claims = new List<Claim>
         {
             new(ClaimTypes.NameIdentifier, user.Id.ToString()),
@@ -22,16 +31,22 @@ public class JwtService : ITokenProvider
             new(ClaimTypes.Role, user.Role.ToString())
         };
 
-        var credentials = new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key)),SecurityAlgorithms.HmacSha256);
+        /// :: Create a symmetric security key using the secret key from options.
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtOptions.SecretKey));
 
+        /// :: Create signing credentials using the security key and HMAC SHA256 algorithm.
+        var credentials = new SigningCredentials(key,SecurityAlgorithms.HmacSha256);
+
+        /// :: Create the JWT token with issuer, audience, claims, expiration, and signing credentials.
         var token = new JwtSecurityToken(
-            issuer: issuer,
-            audience: audience,
+            issuer: _jwtOptions.Issuer,
+            audience: _jwtOptions.Audience,
             claims: claims,
-            expires: DateTime.UtcNow.AddMinutes(15),
+            expires: DateTime.UtcNow.AddMinutes(_jwtOptions.ExpirationMinutes),
             signingCredentials: credentials
         );
 
+        /// :: Returns the token.
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 

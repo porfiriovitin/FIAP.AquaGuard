@@ -1,7 +1,9 @@
 using DotNetEnv;
 using FIAP.AquaGuard.API.Filters;
+using FIAP.AquaGuard.API.Infra.Authentication;
 using FIAP.AquaGuard.Application;
 using FIAP.AquaGuard.Infrastructure;
+using FIAP.AquaGuard.Infrastructure.Options;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.IdentityModel.Tokens;
@@ -10,6 +12,7 @@ using System.Globalization;
 using System.Security.Claims;
 using System.Text;
 
+/// :: Helper method to find the .env file by traversing up the directory tree.
 static string FindEnvFile()
 {
     var directory = new DirectoryInfo(AppContext.BaseDirectory);
@@ -27,15 +30,15 @@ static string FindEnvFile()
     throw new FileNotFoundException("Arquivo .env não encontrado.");
 }
 
-Env.Load(FindEnvFile());
-
-var jwtKey = Environment.GetEnvironmentVariable("JWT_SECRET_KEY")!;
-var issuer = Environment.GetEnvironmentVariable("JWT_ISSUER")!;
-var audience = Environment.GetEnvironmentVariable("JWT_AUDIENCE")!;
-
 var builder = WebApplication.CreateBuilder(args);
 
+/// :: Load environment variables from the .env file and add them to the configuration.
+Env.Load(FindEnvFile());
+builder.Configuration.AddEnvironmentVariables();
+
 /// :: Configure JWT authentication.
+var jwtOptions = builder.Configuration.GetSection(JwtOptions.SectionName).Get<JwtOptions>() ?? throw new InvalidOperationException("JWT configuration is missing.");
+
 builder.Services
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -43,14 +46,14 @@ builder.Services
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
-            ValidIssuer = issuer,
+            ValidIssuer = jwtOptions.Issuer,
 
             ValidateAudience = true,
-            ValidAudience = audience,
+            ValidAudience = jwtOptions.Audience,
 
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(jwtKey)
+                Encoding.UTF8.GetBytes(jwtOptions.SecretKey)
             ),
 
             ValidateLifetime = true,
@@ -64,11 +67,8 @@ builder.Services
         {
             OnMessageReceived = context =>
             {
-
                 if (context.Request.Cookies.TryGetValue("access_token", out var token))
-                {
                     context.Token = token;
-                }
 
                 return Task.CompletedTask;
             }
@@ -86,10 +86,14 @@ builder.Services.AddAuthorizationBuilder()
     .AddPolicy("AuthenticatedUsers", policy =>
         policy.RequireAuthenticatedUser());
 
-// Add services to the container.
+/// :: Add services to the container.
 builder.Services.AddOpenApi();
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
+
+/// :: Add services for accessing HTTP context and managing authentication cookies.
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<IAuthCookieService, AuthCookieService>();
 
 /// :: Configure localization for using bilingual messages.
 builder.Services.Configure<RequestLocalizationOptions>(options =>
@@ -112,7 +116,6 @@ builder.Services.AddControllers(options =>
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
