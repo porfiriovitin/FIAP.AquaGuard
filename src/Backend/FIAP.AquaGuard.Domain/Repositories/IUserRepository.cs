@@ -9,4 +9,6 @@ public interface IUserRepository
     Task<User?> GetByIdAsync(Guid id);
     void Delete(User user);
     void Update(User user);
+    Task<(List<User> Users, int Total)> ListUsersPerCityAsync(int page = 1, int pageSize = 10, Guid cityId = default);
+    Task<(List<User> Users, int Total)> ListUsersAsync(int page = 1, int pageSize = 10);
 }

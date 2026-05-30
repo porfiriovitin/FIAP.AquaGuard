@@ -1,4 +1,5 @@
 using DotNetEnv;
+using FIAP.Aquaguard.Application.Abstractions.Authentication;
 using FIAP.AquaGuard.API.Filters;
 using FIAP.AquaGuard.API.Infra.Authentication;
 using FIAP.AquaGuard.Application;
@@ -96,9 +97,10 @@ builder.Services.AddOpenApi();
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 
-/// :: Add services for accessing HTTP context and managing authentication cookies.
+/// :: Add services for accessing HTTP context and managing authentication cookies and current user.
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IAuthCookieService, AuthCookieService>();
+builder.Services.AddScoped<ICurrentUser, CurrentUser>();
 
 /// :: Configure localization for using bilingual messages.
 builder.Services.Configure<RequestLocalizationOptions>(options =>
