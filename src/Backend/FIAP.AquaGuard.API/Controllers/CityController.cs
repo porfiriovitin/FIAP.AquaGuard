@@ -101,7 +101,7 @@ public class CityController : ControllerBase
     [ProducesResponseType(typeof(PayloadResponse<object>), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> UpdatePaidPlan([FromRoute] Guid id, [FromRoute] int isPaidPlan)
     {
-        ResponseCity result = await _updateCityPaidPlanUseCase.ExecuteAsync(new RequestUpdateCityPaidPlan(id, isPaidPlan));
+        ResponseCity result = await _updateCityPaidPlanUseCase.ExecuteAsync(new RequestUpdateCityPaidPlan(id, (short)isPaidPlan));
 
         return StatusCode(StatusCodes.Status200OK, new PayloadResponse<ResponseCity>
         {

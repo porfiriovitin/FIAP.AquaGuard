@@ -4,6 +4,11 @@ using FIAP.Aquaguard.Application.Features.Cities.DeleteCity;
 using FIAP.Aquaguard.Application.Features.Cities.GetCity;
 using FIAP.Aquaguard.Application.Features.Cities.UpdateCity;
 using FIAP.Aquaguard.Application.Features.Cities.UpdateCityPaidPlan;
+using FIAP.Aquaguard.Application.Features.Sensors.CreateSensor;
+using FIAP.Aquaguard.Application.Features.Sensors.DeleteSensor;
+using FIAP.Aquaguard.Application.Features.Sensors.GetSensor;
+using FIAP.Aquaguard.Application.Features.Sensors.UpdateSensor;
+using FIAP.Aquaguard.Application.Features.Sensors.UpdateSensorStatus;
 using FIAP.AquaGuard.Application.Features.Auth.Register;
 using FIAP.Aquaguard.Application.Features.Users.DeleteUser;
 using FIAP.Aquaguard.Application.Features.Users.GetUser;
@@ -27,6 +32,11 @@ public static class DependencyInjection
         services.AddScoped<UpdateCityUseCase>();
         services.AddScoped<DeleteCityUseCase>();
         services.AddScoped<UpdateCityPaidPlanUseCase>();
+        services.AddScoped<CreateSensorUseCase>();
+        services.AddScoped<GetSensorUseCase>();
+        services.AddScoped<UpdateSensorUseCase>();
+        services.AddScoped<DeleteSensorUseCase>();
+        services.AddScoped<UpdateSensorStatusUseCase>();
         services.AddScoped<IValidator<RequestLogin>, RequestLoginValidator>();
         services.AddScoped<IValidator<RequestRegisterUser>, RegisterUserAccountValidator>();
         services.AddScoped<IValidator<RequestGetUser>, RequestGetUserValidator>();
@@ -37,6 +47,11 @@ public static class DependencyInjection
         services.AddScoped<IValidator<RequestUpdateCity>, RequestUpdateCityValidator>();
         services.AddScoped<IValidator<RequestDeleteCity>, RequestDeleteCityValidator>();
         services.AddScoped<IValidator<RequestUpdateCityPaidPlan>, RequestUpdateCityPaidPlanValidator>();
+        services.AddScoped<IValidator<RequestCreateSensor>, RequestCreateSensorValidator>();
+        services.AddScoped<IValidator<RequestGetSensor>, RequestGetSensorValidator>();
+        services.AddScoped<IValidator<RequestUpdateSensor>, RequestUpdateSensorValidator>();
+        services.AddScoped<IValidator<RequestDeleteSensor>, RequestDeleteSensorValidator>();
+        services.AddScoped<IValidator<RequestUpdateSensorStatus>, RequestUpdateSensorStatusValidator>();
 
         return services;
     }

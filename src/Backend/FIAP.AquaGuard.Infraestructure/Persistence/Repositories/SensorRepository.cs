@@ -1,5 +1,7 @@
 using FIAP.AquaGuard.Domain.Entities;
+using FIAP.AquaGuard.Domain.Enums;
 using FIAP.AquaGuard.Domain.Repositories;
+using FIAP.AquaGuard.Exception.ExceptionsBase;
 using Microsoft.EntityFrameworkCore;
 
 namespace FIAP.AquaGuard.Infrastructure.Persistence.Repositories;
@@ -16,6 +18,18 @@ public class SensorRepository : ISensorRepository
     public async Task AddAsync(Sensor sensor)
     {
         await _context.Sensors.AddAsync(sensor);
+    }
+
+    public async Task ChangeSensorStatus(Sensor sensor, SensorStatus status)
+    {
+        var sensorOnDb = await _context.Sensors.Where(y => y.Id == sensor.Id).FirstOrDefaultAsync();
+
+        if (sensorOnDb is null)
+            throw new ErrorOnValidationException("Sensor não encontrado");
+
+        sensorOnDb.ChangeStatus(status);
+
+        _context.Update(sensorOnDb);
     }
 
     public async Task DeleteAsync(Sensor sensor)
@@ -51,4 +65,7 @@ public class SensorRepository : ISensorRepository
     {
         _context.Sensors.Update(sensor);
     }
+
+
+
 }
