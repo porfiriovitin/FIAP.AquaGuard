@@ -1,6 +1,7 @@
 using FIAP.Aquaguard.Application.Features.Cities.Shared;
 using FIAP.AquaGuard.Domain.Entities;
 using FIAP.AquaGuard.Domain.Repositories;
+using FIAP.AquaGuard.Exception;
 using FIAP.AquaGuard.Exception.ExceptionsBase;
 using FluentValidation;
 
@@ -25,11 +26,11 @@ public class CreateCityUseCase
 
         var cityByName = await _cityRepository.GetByNameAsync(request.Name.Trim());
         if (cityByName is not null)
-            throw new ErrorOnValidationException("Cidade ja cadastrada com este nome.");
+            throw new ErrorOnValidationException(ResourceMessagesException.CITY_NAME_ALREADY_EXISTS);
 
         var cityByZipcode = await _cityRepository.GetByZipCode(request.Zipcode.Trim());
         if (cityByZipcode is not null)
-            throw new ErrorOnValidationException("Cidade ja cadastrada com este CEP.");
+            throw new ErrorOnValidationException(ResourceMessagesException.CITY_ZIPCODE_ALREADY_REGISTERED);
 
         City city = new(
             zipcode: request.Zipcode.Trim(),

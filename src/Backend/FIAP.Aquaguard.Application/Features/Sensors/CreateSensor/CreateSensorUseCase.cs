@@ -2,6 +2,7 @@ using FIAP.Aquaguard.Application.Features.Sensors.Shared;
 using FIAP.AquaGuard.Domain.Entities;
 using FIAP.AquaGuard.Domain.Enums;
 using FIAP.AquaGuard.Domain.Repositories;
+using FIAP.AquaGuard.Exception;
 using FIAP.AquaGuard.Exception.ExceptionsBase;
 using FluentValidation;
 
@@ -30,16 +31,16 @@ public class CreateSensorUseCase
 
         var city = await _cityRepository.GetByIdAsync(request.CityId);
         if (city is null)
-            throw new ErrorOnValidationException("Cidade nao encontrada.");
+            throw new ErrorOnValidationException(ResourceMessagesException.CITY_NOT_FOUND);
 
         if (request.RequestedByRole == UserRole.Manager)
         {
             var manager = await _userRepository.GetByIdAsync(request.RequestedByUserId);
             if (manager is null)
-                throw new ErrorOnValidationException("Usuario solicitante nao encontrado.");
+                throw new ErrorOnValidationException(ResourceMessagesException.REQUEST_USER_NOT_FOUND);
 
             if (manager.CityId is null || manager.CityId != request.CityId)
-                throw new ErrorOnValidationException("Manager so pode cadastrar sensor da propria cidade.");
+                throw new ErrorOnValidationException(ResourceMessagesException.INVALID_SENSOR_REGISTER);
         }
 
         var sensor = new Sensor(

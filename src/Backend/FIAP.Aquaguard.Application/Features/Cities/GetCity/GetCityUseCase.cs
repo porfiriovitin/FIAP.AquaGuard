@@ -1,5 +1,6 @@
 using FIAP.Aquaguard.Application.Features.Cities.Shared;
 using FIAP.AquaGuard.Domain.Repositories;
+using FIAP.AquaGuard.Exception;
 using FIAP.AquaGuard.Exception.ExceptionsBase;
 using FluentValidation;
 
@@ -22,7 +23,7 @@ public class GetCityUseCase
 
         var city = await _cityRepository.GetByIdAsync(request.CityId);
         if (city is null)
-            throw new ErrorOnValidationException("Cidade nao encontrada.");
+            throw new ErrorOnValidationException(ResourceMessagesException.CITY_NOT_FOUND);
 
         return new ResponseCity(
             Id: city.Id,

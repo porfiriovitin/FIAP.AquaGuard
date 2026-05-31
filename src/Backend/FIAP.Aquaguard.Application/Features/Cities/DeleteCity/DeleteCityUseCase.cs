@@ -1,4 +1,5 @@
 using FIAP.AquaGuard.Domain.Repositories;
+using FIAP.AquaGuard.Exception;
 using FIAP.AquaGuard.Exception.ExceptionsBase;
 using FluentValidation;
 
@@ -23,7 +24,7 @@ public class DeleteCityUseCase
 
         var city = await _cityRepository.GetByIdAsync(request.CityId);
         if (city is null)
-            throw new ErrorOnValidationException("Cidade nao encontrada.");
+            throw new ErrorOnValidationException(ResourceMessagesException.CITY_NOT_FOUND);
 
         await _cityRepository.DeleteAsync(city);
         await _unitOfWork.CommitAsync();

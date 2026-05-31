@@ -117,8 +117,23 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="CITY_NAME_ALREADY_EXISTS" xml:space="preserve">
+    <value>Ya existe una ciudad registrada con este nombre.</value>
+  </data>
+  <data name="CITY_NOT_FOUND" xml:space="preserve">
+    <value>Ciudad no encontrada.</value>
+  </data>
+  <data name="CITY_ZIPCODE_ALREADY_REGISTERED" xml:space="preserve">
+    <value>Ya existe una ciudad registrada con este código postal.</value>
+  </data>
+  <data name="INVALID_SENSOR_REGISTER" xml:space="preserve">
+    <value>Solo puedes registrar sensores en tu propia ciudad.</value>
+  </data>
   <data name="LOGIN_INVALID" xml:space="preserve">
     <value>Correo electrónico o contraseña inválidos.</value>
+  </data>
+  <data name="REQUEST_USER_NOT_FOUND" xml:space="preserve">
+    <value>Usuario solicitante no encontrado.</value>
   </data>
   <data name="UNKNOWN_ERROR" xml:space="preserve">
     <value>Error desconecido.</value>
