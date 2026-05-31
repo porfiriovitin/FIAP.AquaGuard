@@ -27,7 +27,7 @@ public class GetSensorUseCase
         if (sensor is null)
             throw new ErrorOnValidationException("Sensor nao encontrado.");
 
-        await ValidateManagerCityScope(request.RequestedByRole, request.RequestedByUserId, sensor.CityId);
+        await ValidateScope(request.RequestedByUserId, sensor.CityId);
 
         return new ResponseSensor(
             Id: sensor.Id,
@@ -45,7 +45,7 @@ public class GetSensorUseCase
         if (cityId == Guid.Empty)
             throw new ErrorOnValidationException("Id da cidade e obrigatorio.");
 
-        await ValidateManagerCityScope(requestedByRole, requestedByUserId, cityId);
+        await ValidateScope(requestedByUserId, cityId);
 
         var (items, total) = await _sensorRepository.GetAllAsync(page, pageSize, cityId);
 
@@ -67,16 +67,13 @@ public class GetSensorUseCase
             sensors: sensors);
     }
 
-    private async Task ValidateManagerCityScope(UserRole role, Guid requestedByUserId, Guid resourceCityId)
+    private async Task ValidateScope(Guid requestedByUserId, Guid resourceCityId)
     {
-        if (role != UserRole.Manager)
-            return;
-
-        var manager = await _userRepository.GetByIdAsync(requestedByUserId);
-        if (manager is null)
+        var cityEmployee = await _userRepository.GetByIdAsync(requestedByUserId);
+        if (cityEmployee is null)
             throw new ErrorOnValidationException("Usuario solicitante nao encontrado.");
 
-        if (manager.CityId is null || manager.CityId != resourceCityId)
+        if (cityEmployee.CityId is null || cityEmployee.CityId != resourceCityId)
             throw new ErrorOnValidationException("Manager so pode acessar sensores da propria cidade.");
     }
 

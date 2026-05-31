@@ -24,13 +24,7 @@ public class SensorController : ControllerBase
     private readonly UpdateSensorStatusUseCase _updateSensorStatusUseCase;
     private readonly ICurrentUser _currentUser;
 
-    public SensorController(
-        CreateSensorUseCase createSensorUseCase,
-        GetSensorUseCase getSensorUseCase,
-        UpdateSensorUseCase updateSensorUseCase,
-        DeleteSensorUseCase deleteSensorUseCase,
-        UpdateSensorStatusUseCase updateSensorStatusUseCase,
-        ICurrentUser currentUser)
+    public SensorController(CreateSensorUseCase createSensorUseCase, GetSensorUseCase getSensorUseCase,UpdateSensorUseCase updateSensorUseCase,DeleteSensorUseCase deleteSensorUseCase,UpdateSensorStatusUseCase updateSensorStatusUseCase,ICurrentUser currentUser)
     {
         _createSensorUseCase = createSensorUseCase;
         _getSensorUseCase = getSensorUseCase;
@@ -80,11 +74,11 @@ public class SensorController : ControllerBase
         });
     }
 
-    [Authorize(Policy = "ManagerOrAdmin")]
-    [HttpGet("{cityId:guid}/{page:int?}/{pageSize:int?}")]
+    [Authorize]
+    [HttpGet]
     [ProducesResponseType(typeof(PayloadResponse<ResponseSensors>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(PayloadResponse<object>), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> List([FromRoute] Guid cityId, [FromRoute] int page = 1, [FromRoute] int pageSize = 10)
+    public async Task<IActionResult> List([FromQuery] Guid cityId, int page = 1,  int pageSize = 10)
     {
         var result = await _getSensorUseCase.ListAsync(cityId, _currentUser.UserId, _currentUser.Role, page, pageSize);
 
@@ -119,10 +113,10 @@ public class SensorController : ControllerBase
     }
 
     [Authorize(Policy = "AdminOnly")]
-    [HttpPatch("{id:guid}/status/{status:int}")]
+    [HttpPatch("status")]
     [ProducesResponseType(typeof(PayloadResponse<ResponseSensor>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(PayloadResponse<object>), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> UpdateStatus([FromRoute] Guid id, [FromRoute] int status)
+    public async Task<IActionResult> UpdateStatus([FromQuery] Guid id, int status)
     {
         var result = await _updateSensorStatusUseCase.ExecuteAsync(new RequestUpdateSensorStatus(id, (SensorStatus)status));
 

@@ -2,6 +2,10 @@
 
 namespace FIAP.AquaGuard.Domain.Enums;
 
+/// ::	0 para Admin
+/// ::	1 para Manager
+/// ::	2 para Employee
+/// ::	3 para Resident
 public enum UserRole
 {
     [PgName("Admin")]

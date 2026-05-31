@@ -4,6 +4,9 @@ using FIAP.Aquaguard.Application.Features.Cities.DeleteCity;
 using FIAP.Aquaguard.Application.Features.Cities.GetCity;
 using FIAP.Aquaguard.Application.Features.Cities.UpdateCity;
 using FIAP.Aquaguard.Application.Features.Cities.UpdateCityPaidPlan;
+using FIAP.Aquaguard.Application.Features.Risks.GetRiskByCoordinates;
+using FIAP.Aquaguard.Application.Features.Risks.GetRiskSimple;
+using FIAP.Aquaguard.Application.Features.Risks.Shared;
 using FIAP.Aquaguard.Application.Features.Sensors.CreateSensor;
 using FIAP.Aquaguard.Application.Features.Sensors.DeleteSensor;
 using FIAP.Aquaguard.Application.Features.Sensors.GetSensor;
@@ -32,6 +35,8 @@ public static class DependencyInjection
         services.AddScoped<UpdateCityUseCase>();
         services.AddScoped<DeleteCityUseCase>();
         services.AddScoped<UpdateCityPaidPlanUseCase>();
+        services.AddScoped<GetRiskSimpleUseCase>();
+        services.AddScoped<GetRiskByCoordinatesUseCase>();
         services.AddScoped<CreateSensorUseCase>();
         services.AddScoped<GetSensorUseCase>();
         services.AddScoped<UpdateSensorUseCase>();
@@ -47,6 +52,7 @@ public static class DependencyInjection
         services.AddScoped<IValidator<RequestUpdateCity>, RequestUpdateCityValidator>();
         services.AddScoped<IValidator<RequestDeleteCity>, RequestDeleteCityValidator>();
         services.AddScoped<IValidator<RequestUpdateCityPaidPlan>, RequestUpdateCityPaidPlanValidator>();
+        services.AddScoped<IValidator<RequestRiskByCoordinates>, RequestRiskByCoordinatesValidator>();
         services.AddScoped<IValidator<RequestCreateSensor>, RequestCreateSensorValidator>();
         services.AddScoped<IValidator<RequestGetSensor>, RequestGetSensorValidator>();
         services.AddScoped<IValidator<RequestUpdateSensor>, RequestUpdateSensorValidator>();

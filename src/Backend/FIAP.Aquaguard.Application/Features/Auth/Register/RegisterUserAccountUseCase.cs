@@ -39,12 +39,19 @@ public class RegisterUserAccountUseCase
         var role = UserRole.Employee;
         Guid? cityId = null;
 
-        if (request.role.HasValue)
+        if (request.Role.HasValue)
         {
             if (RequestedByRole != UserRole.Admin)
                 throw new ErrorOnValidationException("Somente admin pode definir o role no registro.");
 
-            role = request.role.Value;
+            role = request.Role.Value;
+        }
+
+        if(request.CityId != Guid.Empty)
+        {
+            if (RequestedByRole != UserRole.Admin)
+                throw new ErrorOnValidationException("Somente admin pode definir a cidade no registro.");
+            cityId = request.CityId;
         }
 
         if (RequestedByRole == UserRole.Manager)

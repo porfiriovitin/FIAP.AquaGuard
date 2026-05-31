@@ -40,12 +40,13 @@ class CityRepository : ICityRepository
 
     public async Task<City?> GetByCoordinates(Coordinates coordinates)
     {
-        var latitude = coordinates.Latitude.ToString(CultureInfo.InvariantCulture);
-        var longitude = coordinates.Longitude.ToString(CultureInfo.InvariantCulture);
+        var latitude = Convert.ToDecimal(coordinates.Latitude).ToString(CultureInfo.InvariantCulture);
+        var longitude = Convert.ToDecimal(coordinates.Longitude).ToString(CultureInfo.InvariantCulture);
 
-        var city = await _context.Cities.Where(y => y.Latitude.ToString(CultureInfo.InvariantCulture) == latitude && y.Longitude.ToString(CultureInfo.InvariantCulture) == longitude).FirstOrDefaultAsync();
-
-        return city;
+        return await _context.Cities
+            .FirstOrDefaultAsync(y =>
+                EF.Functions.Like(y.Latitude.ToString(), $"{latitude}%") &&
+                EF.Functions.Like(y.Longitude.ToString(), $"{longitude}%"));
     }
 
     public async Task<City?> GetByIdAsync(Guid id)

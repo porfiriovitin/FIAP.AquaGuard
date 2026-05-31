@@ -72,6 +72,7 @@ public class MockSensorService : ISensorProvider
             /// :: Creates a new SensorReadingResult with the simulated values and adds it to the list of readings. Each reading includes the sensor ID, water level, flow rate, rainfall, battery level, signal strength, and the timestamp of when the measurement was taken.
             readings.Add(new SensorReadingResult(
                 SensorId: sensor.Id,
+                PlaceName: sensor.PlaceName,
                 WaterLevelCm: waterLevelCm,
                 FlowRateM3s: dischargeM3s,
                 RainfallMm: rainfallMm,

@@ -17,4 +17,8 @@
     <ProjectReference Include="..\FIAP.AquaGuard.Domain\FIAP.AquaGuard.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Features\Risk\" />
+  </ItemGroup>
+
 </Project>

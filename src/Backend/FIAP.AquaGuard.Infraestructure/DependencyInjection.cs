@@ -57,6 +57,7 @@ public static class DependencyInjection
 
         services.AddScoped<ISatelliteProvider, MockSatelliteService>();
         services.AddScoped<ISensorProvider, MockSensorService>();
+        services.AddScoped<IRiskProvider, RiskService>();
 
 
         return services;

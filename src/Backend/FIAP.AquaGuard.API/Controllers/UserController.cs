@@ -30,6 +30,7 @@ public class UserController : ControllerBase
         _currentUser = currentUser;
     }
 
+
     [Authorize(Policy = "ManagerOrAdmin")]
     [HttpPost("register")]
     [ProducesResponseType(typeof(PayloadResponse<ResponseRegisteredUser>), StatusCodes.Status201Created)]
@@ -63,10 +64,10 @@ public class UserController : ControllerBase
     }
 
     [Authorize(Policy = "ManagerOrAdmin")]
-    [HttpGet("{cityId:guid?}/{page:int?}/{pageSize:int?}")]
+    [HttpGet]
     [ProducesResponseType(typeof(PayloadResponse<ResponseUsers>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(PayloadResponse<object>), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> GetUser([FromRoute] Guid? cityId, int page = 1, int pageSize = 10)
+    public async Task<IActionResult> GetUsers([FromQuery] Guid? cityId, int page = 1, int pageSize = 10)
     {
         ResponseUsers result = await _getUserUseCase.ListUsersAsync(_currentUser.UserId, cityId ?? Guid.Empty, _currentUser.Role, page, pageSize);
 

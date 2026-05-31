@@ -47,7 +47,6 @@ public class SensorRepository : ISensorRepository
         var items = await _context.Sensors
             .Where(y => y.CityId == cityId)
             .AsNoTracking()
-            .Include(s => s.City.Name)
             .OrderBy(s => s.CreatedAt)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)

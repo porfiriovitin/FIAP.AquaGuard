@@ -40,12 +40,12 @@ public class GetUserUseCase
         IEnumerable<User>? usersOnDb = null;
         int total = 0;
 
-        if (cityId == default && RequestedByRole == UserRole.Admin)
+        if (cityId != default && RequestedByRole == UserRole.Admin)
         {
             (usersOnDb, total) = await _userRepository.ListUsersAsync(page, pageSize);
 
         }
-        else if (cityId != Guid.Empty && RequestedByRole == UserRole.Manager)
+        else if (cityId != default && RequestedByRole == UserRole.Manager)
         {
             (usersOnDb, total) = await _userRepository.ListUsersPerCityAsync(page, pageSize, cityId);
         }

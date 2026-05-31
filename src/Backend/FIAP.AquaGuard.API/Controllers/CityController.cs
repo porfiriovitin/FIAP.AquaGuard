@@ -63,10 +63,10 @@ public class CityController : ControllerBase
     }
 
     [Authorize(Policy = "AdminOnly")]
-    [HttpGet("{page:int?}/{pageSize:int?}")]
+    [HttpGet()]
     [ProducesResponseType(typeof(PayloadResponse<ResponseCities>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(PayloadResponse<object>), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> List([FromRoute] int page = 1, [FromRoute] int pageSize = 10)
+    public async Task<IActionResult> List([FromQuery] int page = 1, int pageSize = 10)
     {
         ResponseCities result = await _getCityUseCase.ListCitiesAsync(page, pageSize);
 
@@ -96,10 +96,10 @@ public class CityController : ControllerBase
     }
 
     [Authorize(Policy = "AdminOnly")]
-    [HttpPatch("{id:guid}/paid-plan/{isPaidPlan:int}")]
+    [HttpPatch("plan")]
     [ProducesResponseType(typeof(PayloadResponse<ResponseCity>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(PayloadResponse<object>), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> UpdatePaidPlan([FromRoute] Guid id, [FromRoute] int isPaidPlan)
+    public async Task<IActionResult> UpdatePaidPlan([FromQuery] Guid id, int isPaidPlan)
     {
         ResponseCity result = await _updateCityPaidPlanUseCase.ExecuteAsync(new RequestUpdateCityPaidPlan(id, (short)isPaidPlan));
 
