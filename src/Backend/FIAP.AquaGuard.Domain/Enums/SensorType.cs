@@ -13,3 +13,7 @@ public enum SensorType
     [PgName("RainGauge")]
     RainGauge
 }
+
+/// :: 0 - Water Level
+/// :: 1 - FlowRate
+/// :: 2 - RainGauge

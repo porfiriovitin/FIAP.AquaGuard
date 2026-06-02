@@ -1,5 +1,7 @@
 using FIAP.AquaGuard.API.Controllers;
+using FIAP.Aquaguard.Application.Abstractions.Authentication;
 using FIAP.AquaGuard.Application.Features.Auth.Register;
+using FIAP.AquaGuard.Domain.Enums;
 using FIAP.AquaGuard.Domain.Providers;
 using FIAP.AquaGuard.Domain.Repositories;
 using FluentAssertions;
@@ -28,7 +30,11 @@ public class UserControllerTests
             unitOfWork.Object,
             passwordHasher.Object,
             validator);
-        var controller = new UserController(useCase);
+        var currentUser = new Mock<ICurrentUser>();
+        currentUser.SetupGet(x => x.UserId).Returns(Guid.NewGuid());
+        currentUser.SetupGet(x => x.Role).Returns(UserRole.Admin);
+
+        var controller = new UserController(useCase, null!, null!, null!, currentUser.Object);
 
         // Act
         var result = await controller.Register(request);

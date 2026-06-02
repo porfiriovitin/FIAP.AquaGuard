@@ -1,10 +1,7 @@
-﻿using FIAP.Aquaguard.Application.Shared.Responses;
-using FIAP.AquaGuard.Application.Shared.Responses;
-using FIAP.AquaGuard.Domain.Entities;
+﻿using FIAP.AquaGuard.Domain.Entities;
 using FIAP.AquaGuard.Domain.Enums;
 using FIAP.AquaGuard.Domain.Providers;
 using FIAP.AquaGuard.Domain.Repositories;
-using FIAP.AquaGuard.Exception;
 using FIAP.AquaGuard.Exception.ExceptionsBase;
 using FluentValidation;
 
@@ -17,11 +14,7 @@ public class RegisterUserAccountUseCase
     private readonly IPasswordHasherProvider _passwordHasher;
     private readonly IValidator<RequestRegisterUser> _validator;
 
-    public RegisterUserAccountUseCase(
-        IUserRepository userRepository,
-        IUnitOfWork unitOfWork,
-        IPasswordHasherProvider passwordHasher,
-        IValidator<RequestRegisterUser> validator)
+    public RegisterUserAccountUseCase(IUserRepository userRepository, IUnitOfWork unitOfWork, IPasswordHasherProvider passwordHasher, IValidator<RequestRegisterUser> validator)
     {
         _userRepository = userRepository;
         _unitOfWork = unitOfWork;
@@ -29,7 +22,7 @@ public class RegisterUserAccountUseCase
         _validator = validator;
     }
 
-    public async Task<ResponseRegisteredUser> ExecuteAsync(RequestRegisterUser request)
+    public async Task<ResponseRegisteredUser> ExecuteAsync(RequestRegisterUser request, Guid RequestedByUserId, UserRole? RequestedByRole = null)
     {
         /// :: Validate the request.
         Validate(request, _validator);
@@ -43,12 +36,47 @@ public class RegisterUserAccountUseCase
         /// :: Hashes the password.
         var hashedPassword = _passwordHasher.CreatePasswordHash(request.Password);
 
+        var role = UserRole.Employee;
+        Guid? cityId = null;
+
+        if (request.Role.HasValue)
+        {
+            if (RequestedByRole != UserRole.Admin)
+                throw new ErrorOnValidationException("Somente admin pode definir o role no registro.");
+
+            role = request.Role.Value;
+        }
+
+        if(request.CityId != Guid.Empty)
+        {
+            if (RequestedByRole != UserRole.Admin)
+                throw new ErrorOnValidationException("Somente admin pode definir a cidade no registro.");
+            cityId = request.CityId;
+        }
+
+        if (RequestedByRole == UserRole.Manager)
+        {
+            if (RequestedByUserId == Guid.Empty)
+                throw new ErrorOnValidationException("Usuario solicitante invalido.");
+
+            var manager = await _userRepository.GetByIdAsync(RequestedByUserId);
+
+            if (manager is null)
+                throw new ErrorOnValidationException("Manager nao encontrado.");
+
+            if (manager.CityId is null)
+                throw new ErrorOnValidationException("Manager sem cidade vinculada.");
+
+            cityId = manager.CityId;
+        }
+
         /// :: Maps the request to the domain model.
         User newUser = new(
             name: request.Name,
             email: request.Email.Trim(),
             passwordHash: hashedPassword,
-            role: UserRole.Employee);
+            role: role,
+            cityId: cityId);
 
         /// :: Save the user to the database.
         await _userRepository.AddAsync(newUser);

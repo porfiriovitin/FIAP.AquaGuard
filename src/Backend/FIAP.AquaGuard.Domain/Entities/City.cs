@@ -77,4 +77,9 @@ public class City
         UpdatedAt = DateTimeOffset.UtcNow;
     }
 
+    public void BecomeFreePlan()
+    {
+        IsPaidPlan = 0;
+        UpdatedAt = DateTimeOffset.UtcNow;
+    }
 }

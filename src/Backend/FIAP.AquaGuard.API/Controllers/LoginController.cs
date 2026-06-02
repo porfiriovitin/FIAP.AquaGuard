@@ -29,11 +29,7 @@ public class LoginController : ControllerBase
 
         _authCookieService.SetAccessToken(result.Token);
 
-        var responseDTO = new ResponseLoginDTO(
-            result.Name,
-            result.Email,
-            result.Role
-        );
+        var responseDTO = new ResponseLoginDTO(result.Name,result.Email,result.Role);
 
         return StatusCode(StatusCodes.Status200OK, new PayloadResponse<ResponseLoginDTO>
         {

@@ -4,9 +4,10 @@
     <File Path=".gitignore" />
     <File Path="example.env" />
     <File Path="init.sql" />
-    <File Path="service-account.json" />
+    <File Path="README.md" />
   </Folder>
   <Folder Name="/src/Backend/">
+    <File Path="src/Backend/project-info.md" />
     <Project Path="src/Backend/FIAP.AquaGuard.API/FIAP.AquaGuard.API.csproj" />
     <Project Path="src/Backend/FIAP.Aquaguard.Application/FIAP.Aquaguard.Application.csproj" />
     <Project Path="src/Backend/FIAP.AquaGuard.Domain/FIAP.AquaGuard.Domain.csproj" />

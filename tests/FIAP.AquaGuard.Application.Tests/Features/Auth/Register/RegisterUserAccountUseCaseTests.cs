@@ -1,6 +1,7 @@
 using FIAP.AquaGuard.Application.Features.Auth.Register;
 using FIAP.AquaGuard.Domain.Providers;
 using FIAP.AquaGuard.Domain.Repositories;
+using FIAP.AquaGuard.Domain.Enums;
 using FIAP.AquaGuard.Exception.ExceptionsBase;
 using FluentAssertions;
 using Moq;
@@ -30,7 +31,7 @@ public class RegisterUserAccountUseCaseTests
             validator);
 
         // Act
-        var response = await useCase.ExecuteAsync(request);
+        var response = await useCase.ExecuteAsync(request, Guid.NewGuid(), UserRole.Admin);
 
         // Assert
         response.Email.Should().Be("maria@email.com");
@@ -59,7 +60,7 @@ public class RegisterUserAccountUseCaseTests
             validator);
 
         // Act
-        Func<Task> act = () => useCase.ExecuteAsync(request);
+        Func<Task> act = () => useCase.ExecuteAsync(request, Guid.NewGuid());
 
         // Assert
         await act.Should().ThrowAsync<ErrorOnValidationException>();

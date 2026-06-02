@@ -61,11 +61,56 @@ namespace FIAP.AquaGuard.Exception {
         }
         
         /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a A city with this name is already registered..
+        /// </summary>
+        public static string CITY_NAME_ALREADY_EXISTS {
+            get {
+                return ResourceManager.GetString("CITY_NAME_ALREADY_EXISTS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a City not found..
+        /// </summary>
+        public static string CITY_NOT_FOUND {
+            get {
+                return ResourceManager.GetString("CITY_NOT_FOUND", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a A city with this ZIP code is already registered..
+        /// </summary>
+        public static string CITY_ZIPCODE_ALREADY_REGISTERED {
+            get {
+                return ResourceManager.GetString("CITY_ZIPCODE_ALREADY_REGISTERED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a You can only register sensors in your own city..
+        /// </summary>
+        public static string INVALID_SENSOR_REGISTER {
+            get {
+                return ResourceManager.GetString("INVALID_SENSOR_REGISTER", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Invalid email or password..
         /// </summary>
         public static string LOGIN_INVALID {
             get {
                 return ResourceManager.GetString("LOGIN_INVALID", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Requesting user not found..
+        /// </summary>
+        public static string REQUEST_USER_NOT_FOUND {
+            get {
+                return ResourceManager.GetString("REQUEST_USER_NOT_FOUND", resourceCulture);
             }
         }
         

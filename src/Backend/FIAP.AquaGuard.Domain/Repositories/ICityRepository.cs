@@ -1,4 +1,5 @@
 ﻿using FIAP.AquaGuard.Domain.Entities;
+using FIAP.AquaGuard.Domain.Models;
 
 namespace FIAP.AquaGuard.Domain.Repositories;
 
@@ -11,4 +12,5 @@ public interface ICityRepository
     Task<(List<City> Items, int Total)> GetAllAsync(int page = 1, int pageSize = 10);
     Task DeleteAsync(City city);
     Task UpdateAsync(City city);
+    Task<City?> GetByCoordinates(Coordinates coordinates);
 }

@@ -1,4 +1,5 @@
 using DotNetEnv;
+using FIAP.Aquaguard.Application.Abstractions.Authentication;
 using FIAP.AquaGuard.API.Filters;
 using FIAP.AquaGuard.API.Infra.Authentication;
 using FIAP.AquaGuard.Application;
@@ -7,10 +8,10 @@ using FIAP.AquaGuard.Infrastructure.Options;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.IdentityModel.Tokens;
-using Scalar.AspNetCore;
 using System.Globalization;
 using System.Security.Claims;
 using System.Text;
+using System.Threading.RateLimiting;
 
 /// :: Helper method to find the .env file by traversing up the directory tree.
 static string FindEnvFile()
@@ -29,6 +30,7 @@ static string FindEnvFile()
 
     throw new FileNotFoundException("Arquivo .env não encontrado.");
 }
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -87,13 +89,13 @@ builder.Services.AddAuthorizationBuilder()
         policy.RequireAuthenticatedUser());
 
 /// :: Add services to the container.
-builder.Services.AddOpenApi();
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 
-/// :: Add services for accessing HTTP context and managing authentication cookies.
+/// :: Add services for accessing HTTP context and managing authentication cookies and current user.
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IAuthCookieService, AuthCookieService>();
+builder.Services.AddScoped<ICurrentUser, CurrentUser>();
 
 /// :: Configure localization for using bilingual messages.
 builder.Services.Configure<RequestLocalizationOptions>(options =>
@@ -114,15 +116,37 @@ builder.Services.AddControllers(options =>
     options.Filters.Add<ExceptionFilter>();
 });
 
+/// :: Global Rate Limiter.
+builder.Services.AddRateLimiter(options =>
+{
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+
+    options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(context =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey: context.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+            factory: _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = 60,
+                Window = TimeSpan.FromMinutes(1),
+                QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                QueueLimit = 0
+            }));
+});
+
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
-    app.MapScalarApiReference();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();
+
+app.UseRateLimiter();
 
 app.UseAuthentication();
 app.UseAuthorization();

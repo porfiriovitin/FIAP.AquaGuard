@@ -13,6 +13,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace FIAP.AquaGuard.Infrastructure;
 
+/// <summary>
+/// Dependency Injection
+/// </summary>
 public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services,IConfiguration configuration)
@@ -48,9 +51,13 @@ public static class DependencyInjection
 
         services.AddHttpClient<IOpenMeteoProvider, OpenMeteoService>(client =>
         {
-            client.Timeout = TimeSpan.FromSeconds(10);
+            client.Timeout = TimeSpan.FromSeconds(30);
         })
         .AddStandardResilienceHandler();
+
+        services.AddScoped<ISatelliteProvider, MockSatelliteService>();
+        services.AddScoped<ISensorProvider, MockSensorService>();
+        services.AddScoped<IRiskProvider, RiskService>();
 
 
         return services;
