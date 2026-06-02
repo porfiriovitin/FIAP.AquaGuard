@@ -10,7 +10,7 @@ type Props =
   | (BaseProps & { variant: 'link' })
   | (BaseProps & { variant: 'toggle'; checked: boolean; onToggle: () => void })
   | (BaseProps & { variant: 'value';  valueText: string })
-  | (BaseProps & { variant: 'danger' })
+  | (BaseProps & { variant: 'danger'; onPress?: () => void })
 
 function Toggle({ checked, onToggle }: { checked: boolean; onToggle: () => void }) {
   return (
@@ -41,8 +41,17 @@ export function SettingsRow(props: Props) {
 
   return (
     <div
-      className="flex items-center justify-between px-4 py-3 border-t border-[var(--ink-100)]
-                 active:bg-[var(--bg-sunken)] transition-colors duration-75"
+      role={isDanger ? 'button' : undefined}
+      tabIndex={isDanger ? 0 : undefined}
+      onClick={isDanger && props.variant === 'danger' ? props.onPress : undefined}
+      onKeyDown={
+        isDanger && props.variant === 'danger' && props.onPress
+          ? e => { if (e.key === 'Enter' || e.key === ' ') props.onPress!() }
+          : undefined
+      }
+      className={`flex items-center justify-between px-4 py-3 border-t border-[var(--ink-100)]
+                 active:bg-[var(--bg-sunken)] transition-colors duration-75
+                 ${isDanger ? 'cursor-pointer' : ''}`}
     >
       {/* Leading: icon + label */}
       <div className="flex items-center gap-3">

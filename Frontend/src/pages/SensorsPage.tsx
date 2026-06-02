@@ -1,28 +1,37 @@
-import { SENSORS, CONNECTED_COUNT } from '../features/sensor/data/sensors'
+import { isConnected } from '../features/sensor/data/sensors'
+import { useSensors } from '../features/sensor/hooks/useSensors'
 import { SensorCard } from '../features/sensor/components/SensorCard'
+import { LoadingSpinner, SectionEyebrow } from '../shared/components/ui'
 
 interface Props {
   onSelectSensor: (id: string) => void
 }
 
 export function SensorsPage({ onSelectSensor }: Props) {
+  const { data: sensors = [], isLoading } = useSensors()
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[40vh]">
+        <LoadingSpinner size="md" />
+      </div>
+    )
+  }
+
+  const connectedCount = sensors.filter(s => isConnected(s.status)).length
+
   return (
     <div className="flex flex-col gap-6 px-5 pt-5 pb-6 max-w-screen-xl mx-auto">
 
       <header className="flex flex-col gap-1">
         <div className="flex items-baseline gap-2">
-          <span
-            className="text-[12px] font-semibold tracking-[0.12em] uppercase text-[var(--cyan-600)]"
-            style={{ fontFamily: 'var(--font-sans)' }}
-          >
-            REDE DE SENSORES
-          </span>
-          {CONNECTED_COUNT > 0 && (
+          <SectionEyebrow>REDE DE SENSORES</SectionEyebrow>
+          {connectedCount > 0 && (
             <span
               className="text-[12px] font-semibold"
               style={{ fontFamily: 'var(--font-mono)', color: 'var(--risk-low)' }}
             >
-              {CONNECTED_COUNT} ativos
+              {connectedCount} ativos
             </span>
           )}
         </div>
@@ -35,7 +44,7 @@ export function SensorsPage({ onSelectSensor }: Props) {
       </header>
 
       <section className="flex flex-col gap-4">
-        {SENSORS.map(sensor => (
+        {sensors.map(sensor => (
           <SensorCard
             key={sensor.id}
             stationId={sensor.stationId}

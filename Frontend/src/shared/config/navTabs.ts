@@ -10,11 +10,11 @@ export interface NavTab {
 }
 
 export const NAV_TABS: NavTab[] = [
-  { path: '/',         label: 'INÍCIO',   icon: Home                    },
-  { path: '/mapa',     label: 'MAPA',     icon: Map                     },
-  { path: '/riscos',   label: 'RISCOS',   icon: Bell,  canAlert: true   },
-  { path: '/sensors',  label: 'SENSORES', icon: Radio, iconSize: 20     },
-  { path: '/perfil',   label: 'PERFIL',   icon: User                    },
+  { path: '/app',          label: 'INÍCIO',   icon: Home                    },
+  { path: '/app/map',      label: 'MAPA',     icon: Map                     },
+  { path: '/app/risks',    label: 'RISCOS',   icon: Bell,  canAlert: true   },
+  { path: '/app/sensors',  label: 'SENSORES', icon: Radio, iconSize: 20     },
+  { path: '/app/profile',  label: 'PERFIL',   icon: User                    },
 ]
 
 // Single source of truth for animation direction — derived from nav order above

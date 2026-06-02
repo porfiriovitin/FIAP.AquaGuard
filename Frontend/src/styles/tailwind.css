@@ -5,6 +5,8 @@
   --animate-pulse-signal: ag-pulse 2s infinite;
   --animate-pulse-crit:   ag-pulse-crit 2s infinite;
   --animate-ping-crit:    ag-ping 2s infinite;
+  --animate-orbit:        ag-orbit 8s linear infinite;
+  --animate-live:         ag-live-blink 1.4s ease-in-out infinite;
 }
 
 @keyframes ag-pulse {
@@ -18,4 +20,19 @@
 @keyframes ag-ping {
   0%, 100% { box-shadow: 0 0 0 0 rgba(214, 58, 58, 0.5); }
   60%      { box-shadow: 0 0 0 14px rgba(214, 58, 58, 0); }
+}
+@utility text-gradient-accent {
+  background-image: linear-gradient(90deg, var(--cyan-600), var(--blue-700));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+@keyframes ag-orbit {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+@keyframes ag-live-blink {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.25; }
 }

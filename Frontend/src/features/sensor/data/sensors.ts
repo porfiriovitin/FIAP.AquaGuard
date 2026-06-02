@@ -49,7 +49,8 @@ export const CONNECTED_COUNT = SENSORS.filter(s => isConnected(s.status)).length
 export interface SensorDetail {
   battery:     number
   signalDbm:   number
-  coordinates: string
+  coordinates: string            // DMS — para exibição
+  coords:      [number, number]  // [lng, lat] decimal — para Mapbox
   telemetry:   Array<{ time: string; level: number; trend: number }>
 }
 
@@ -58,6 +59,7 @@ export const SENSOR_DETAILS: Partial<Record<string, SensorDetail>> = {
     battery:     84,
     signalDbm:   -82,
     coordinates: "23°32'14\"S  46°38'08\"W",
+    coords:      [-46.6356, -23.5372],
     telemetry: [
       { time: '14:45', level: 3.15, trend:  0.42 },
       { time: '14:30', level: 2.97, trend:  0.35 },
@@ -69,6 +71,7 @@ export const SENSOR_DETAILS: Partial<Record<string, SensorDetail>> = {
     battery:     61,
     signalDbm:   -94,
     coordinates: "23°31'48\"S  46°37'22\"W",
+    coords:      [-46.6228, -23.5300],
     telemetry: [
       { time: '14:45', level: 1.20, trend:  0.08 },
       { time: '14:30', level: 1.15, trend:  0.05 },
@@ -80,6 +83,7 @@ export const SENSOR_DETAILS: Partial<Record<string, SensorDetail>> = {
     battery:     12,
     signalDbm:   -110,
     coordinates: "23°42'11\"S  46°41'55\"W",
+    coords:      [-46.6986, -23.7031],
     telemetry: [
       { time: '12:30', level: 2.85, trend:  0.00 },
       { time: '12:15', level: 2.85, trend:  0.00 },

@@ -4,7 +4,7 @@ import mapboxgl from 'mapbox-gl'
 import 'mapbox-gl/dist/mapbox-gl.css'
 // Hides Mapbox logo + attribution (see styles.css for legal caveat)
 import '../styles.css'
-import { AlertTriangle, MapPin } from 'lucide-react'
+import { MapPin } from 'lucide-react'
 import { useDeviceLocation } from '../hooks/useDeviceLocation'
 import {
   createMarkerElement,
@@ -43,6 +43,7 @@ interface Props {
   interactions?:      boolean | InteractionFlags        // default false (locked)
   mapStyle?:          string                            // default 'mapbox://styles/mapbox/dark-v11'
   className?:         string                            // overrides container size
+  onLoad?:            (map: mapboxgl.Map) => void       // called once after map 'load' fires
 }
 
 // ─── Constants ──────────────────────────────────────────────────────────
@@ -112,7 +113,7 @@ function applyInteractions(map: mapboxgl.Map, r: ResolvedInteractions): void {
 
 function LoadingOverlay() {
   return (
-    <div className="absolute inset-0 flex items-center justify-center bg-[var(--navy-900)]/80 z-10">
+    <div className="absolute inset-0 flex items-center justify-center bg-[var(--navy-950)]/80 z-10">
       <div className="flex flex-col items-center gap-2">
         <div className="size-6 rounded-full border-2 border-[var(--cyan-400)] border-t-transparent animate-spin" />
         <span
@@ -146,22 +147,26 @@ function LocationDeniedBanner() {
   )
 }
 
-function MapErrorOverlay({ message }: { message: string }) {
+function MapLoadingOverlay({ visible }: { visible: boolean }) {
   return (
-    <div className="absolute inset-0 flex items-center justify-center z-10">
-      <div
-        className="flex flex-col items-center gap-2 px-4 py-3 rounded-[var(--radius-sm)]
-                   border border-[var(--navy-700)] max-w-[260px] text-center"
-        style={hudPanelStyle}
+    <div
+      className="absolute inset-0 flex items-center justify-center z-10 transition-opacity duration-500 pointer-events-none"
+      style={{ backgroundColor: 'var(--navy-950)', opacity: visible ? 1 : 0 }}
+    >
+      <div className="size-5 rounded-full border-2 border-[var(--cyan-400)] border-t-transparent animate-spin" />
+    </div>
+  )
+}
+
+function MapErrorOverlay() {
+  return (
+    <div className="absolute inset-0 flex items-center justify-center z-10 bg-[var(--ink-950)]">
+      <span
+        className="text-[11px] text-[var(--fg-onDarkMuted)]"
+        style={{ fontFamily: 'var(--font-mono)' }}
       >
-        <AlertTriangle size={16} className="text-[var(--risk-high)] shrink-0" />
-        <span
-          className="text-[10px] text-[var(--fg-onDarkMuted)] leading-relaxed"
-          style={{ fontFamily: 'var(--font-mono)' }}
-        >
-          {message}
-        </span>
-      </div>
+        Mapa não disponível
+      </span>
     </div>
   )
 }
@@ -180,10 +185,12 @@ export function MapView({
   interactions,
   mapStyle = DEFAULT_MAP_STYLE,
   className = 'w-full h-[300px] md:h-[360px]',
+  onLoad,
 }: Props) {
   const containerRef = useRef<HTMLDivElement>(null)
   const mapRef       = useRef<mapboxgl.Map | null>(null)
-  const [mapError, setMapError] = useState<string | null>(null)
+  const [hasMapError, setHasMapError] = useState(false)
+  const [isMapReady,  setIsMapReady]  = useState(false)
 
   const { coords: deviceCoords, status: locStatus } = useDeviceLocation({
     enabled: useDeviceLocationProp,
@@ -201,13 +208,14 @@ export function MapView({
 
   // ─── Effect 1: init — creates the map ONCE (re-runs only on style change) ───
   useEffect(() => {
-    setMapError(null)
+    setHasMapError(false)
+    setIsMapReady(false)
     if (!containerRef.current) return
 
     const token = import.meta.env.VITE_MAPBOX_TOKEN
     if (!token) {
       console.error('[MapView] VITE_MAPBOX_TOKEN não encontrado. Reinicie o servidor após editar o .env.')
-      setMapError('Token do mapa não configurado. Reinicie o servidor de desenvolvimento.')
+      setHasMapError(true)
       return
     }
 
@@ -229,19 +237,19 @@ export function MapView({
         // prop can be toggled after mount without re-init.
       })
     } catch (err) {
-      const msg = err instanceof Error ? err.message : 'Falha ao inicializar o mapa'
-      console.error('[MapView] constructor threw:', msg)
-      setMapError(msg)
+      console.error('[MapView] constructor threw:', err instanceof Error ? err.message : err)
+      setHasMapError(true)
       return
     }
 
     mapRef.current = map
     applyInteractions(map, resolveInteractions(interactions))
+    map.once('idle', () => setIsMapReady(true))
+    if (onLoad) map.once('load', () => onLoad(map))
 
     map.on('error', (e) => {
-      const msg = e.error?.message ?? 'Erro desconhecido'
-      console.error('[MapView] runtime error:', msg)
-      setMapError(`Mapbox: ${msg}`)
+      console.error('[MapView] runtime error:', e.error?.message ?? 'unknown')
+      setHasMapError(true)
     })
 
     // React 18 StrictMode mounts → unmounts → remounts in dev. map.remove()
@@ -317,16 +325,18 @@ export function MapView({
   // ─── Render ─────────────────────────────────────────────────────────
   return (
     <div
-      className={`relative isolate rounded-[12px] overflow-hidden border border-[var(--navy-800)] ${className}`}
+      className={`relative isolate rounded-[12px] overflow-hidden border border-[var(--navy-800)] bg-[var(--navy-900)] ${className}`}
       style={{ boxShadow: 'var(--inset-soft)' }}
     >
       {/* Inline style prevents .mapboxgl-map { position: relative } from overriding absolute positioning */}
       <div ref={containerRef} style={{ position: 'absolute', inset: 0 }} />
 
+      <MapLoadingOverlay visible={!isMapReady && !hasMapError} />
+
       {/* State overlays — only relevant when device location was requested */}
       {useDeviceLocationProp && locStatus === 'loading' && <LoadingOverlay />}
       {useDeviceLocationProp && (locStatus === 'denied' || locStatus === 'unavailable') && <LocationDeniedBanner />}
-      {mapError && <MapErrorOverlay message={mapError} />}
+      {hasMapError && <MapErrorOverlay />}
 
       {/* Edge vignette — softens the border on mobile */}
       <div

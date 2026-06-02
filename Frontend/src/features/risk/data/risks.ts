@@ -81,6 +81,7 @@ export const RISKS: RiskEntry[] = [
 ]
 
 export interface RiskDetail {
+  coords:    [number, number]   // [lng, lat] — centro do mapa no modal
   evolution: Array<{
     label: string
     level: number
@@ -94,6 +95,7 @@ export interface RiskDetail {
 
 export const RISK_DETAILS: Partial<Record<string, RiskDetail>> = {
   'rh-204': {
+    coords: [-46.7158, -23.5155],
     evolution: [
       { label: 'Em 1 hora (Previsto)', level: 5.00, kind: 'predicted' },
       { label: 'Agora',                level: 4.82, kind: 'now'       },
@@ -103,6 +105,7 @@ export const RISK_DETAILS: Partial<Record<string, RiskDetail>> = {
     telemetry: { flowRate: 850, rainfall: 112 },
   },
   'rh-205': {
+    coords: [-46.7310, -23.5892],
     evolution: [
       { label: 'Em 1 hora (Previsto)', level: 5.87, kind: 'predicted' },
       { label: 'Agora',                level: 5.82, kind: 'now'       },
@@ -112,6 +115,7 @@ export const RISK_DETAILS: Partial<Record<string, RiskDetail>> = {
     telemetry: { flowRate: 620, rainfall: 78 },
   },
   'rh-118': {
+    coords: [-46.5869, -23.5875],
     evolution: [
       { label: 'Em 1 hora (Previsto)', level: 3.43, kind: 'predicted' },
       { label: 'Agora',                level: 3.40, kind: 'now'       },
@@ -121,6 +125,7 @@ export const RISK_DETAILS: Partial<Record<string, RiskDetail>> = {
     telemetry: { flowRate: 310, rainfall: 45 },
   },
   'rh-105': {
+    coords: [-46.6480, -23.7440],
     evolution: [
       { label: 'Em 1 hora (Previsto)', level: 2.08, kind: 'predicted' },
       { label: 'Agora',                level: 2.10, kind: 'now'       },
@@ -130,6 +135,7 @@ export const RISK_DETAILS: Partial<Record<string, RiskDetail>> = {
     telemetry: { flowRate: 95, rainfall: 12 },
   },
   'rh-08': {
+    coords: [-46.6055, -23.5860],
     evolution: [
       { label: 'Em 1 hora (Previsto)', level: 0.85, kind: 'predicted' },
       { label: 'Agora',                level: 0.85, kind: 'now'       },

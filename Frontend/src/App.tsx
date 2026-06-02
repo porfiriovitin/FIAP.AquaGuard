@@ -1,16 +1,21 @@
-import { useRef, useState } from 'react'
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
+import { useRef, useState, useMemo } from 'react'
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { TopAppBar } from './shared/components/layout/TopAppBar'
 import { BottomNavBar } from './shared/components/layout/BottomNavBar'
 import { NAV_TABS, TAB_ORDER } from './shared/config/navTabs'
-import { RISKS, isUrgent } from './features/risk/data/risks'
+import { isUrgent } from './features/risk/data/risks'
+import { useRisks } from './features/risk/hooks/useRisks'
 import { HomePage } from './pages/HomePage'
 import { RisksPage } from './pages/RisksPage'
 import { SensorsPage } from './pages/SensorsPage'
 import { ProfilePage } from './pages/ProfilePage'
+import { LoginPage } from './pages/LoginPage'
+import { MapPage } from './pages/MapPage'
 import { SensorDetailModal } from './features/sensor/components/SensorDetailModal'
 import { RiskDetailModal } from './features/risk/components/RiskDetailModal'
+import { AuthProvider } from './features/auth/context/AuthContext'
+import { ProtectedRoute } from './shared/components/auth/ProtectedRoute'
 
 const HEADER_HEIGHT = '65px'
 const NAV_HEIGHT    = '75px'
@@ -35,12 +40,6 @@ const pageVariants = {
   }),
 }
 
-// Paths with active alerts — drives the badge dot in BottomNavBar
-const ALERT_PATHS = new Set(
-  RISKS.some(r => isUrgent(r.level)) ? ['/riscos'] : []
-)
-
-// Shown for tabs that don't have a page built yet
 function PlaceholderPage() {
   const location = useLocation()
   const tab = NAV_TABS.find(t => t.path === location.pathname)
@@ -65,10 +64,15 @@ function AppLayout() {
   const [selectedSensorId, setSelectedSensorId] = useState<string | null>(null)
   const [selectedRiskId,   setSelectedRiskId]   = useState<string | null>(null)
 
+  const { data: risks = [] } = useRisks()
+  const alertPaths = useMemo(
+    () => new Set(risks.some(r => isUrgent(r.level)) ? ['/app/risks'] : []),
+    [risks],
+  )
+
   if (prevPathnameRef.current !== location.pathname) {
     const from = TAB_ORDER.indexOf(prevPathnameRef.current)
     const to   = TAB_ORDER.indexOf(location.pathname)
-    // Guard unknown paths (-1) — fall back to no direction rather than a wrong one
     directionRef.current    = (from < 0 || to < 0) ? 0 : to >= from ? 1 : -1
     prevPathnameRef.current = location.pathname
   }
@@ -94,17 +98,17 @@ function AppLayout() {
             exit="exit"
           >
             <Routes location={location}>
-              <Route path="/"         element={<HomePage    onSelectSensor={setSelectedSensorId} onSelectRisk={setSelectedRiskId} />} />
-              <Route path="/riscos"   element={<RisksPage   onSelectRisk={setSelectedRiskId} />} />
-              <Route path="/mapa"     element={<PlaceholderPage />} />
-              <Route path="/sensors"  element={<SensorsPage onSelectSensor={setSelectedSensorId} />} />
-              <Route path="/perfil"   element={<ProfilePage />}     />
+              <Route index          element={<HomePage    onSelectSensor={setSelectedSensorId} onSelectRisk={setSelectedRiskId} />} />
+              <Route path="risks"   element={<RisksPage   onSelectRisk={setSelectedRiskId} />} />
+              <Route path="map"     element={<MapPage />} />
+              <Route path="sensors" element={<SensorsPage onSelectSensor={setSelectedSensorId} />} />
+              <Route path="profile" element={<ProfilePage />} />
             </Routes>
           </motion.div>
         </AnimatePresence>
       </main>
 
-      <BottomNavBar alertPaths={ALERT_PATHS} />
+      <BottomNavBar alertPaths={alertPaths} />
 
       <AnimatePresence>
         {selectedSensorId && (
@@ -132,7 +136,20 @@ function AppLayout() {
 export default function App() {
   return (
     <BrowserRouter>
-      <AppLayout />
+      <AuthProvider>
+        <Routes>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/" element={<Navigate to="/app" replace />} />
+          <Route
+            path="/app/*"
+            element={
+              <ProtectedRoute>
+                <AppLayout />
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+      </AuthProvider>
     </BrowserRouter>
   )
 }

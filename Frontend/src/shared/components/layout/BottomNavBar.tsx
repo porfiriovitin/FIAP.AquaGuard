@@ -17,7 +17,7 @@ export function BottomNavBar({ alertPaths }: Props) {
           <NavLink
             key={path}
             to={path}
-            end={path === '/'}
+            end={path === '/app'}
             aria-label={label}
             className="flex-1 flex flex-col items-center justify-center gap-1 relative
                        active:bg-[var(--bg-sunken)] transition-colors duration-100"

@@ -4,13 +4,15 @@ import {
   Bell, FileText, MessageSquare,
   Timer, HelpCircle, Scale, LogOut,
 } from 'lucide-react'
-import { USER_PROFILE, ALERT_COUNT, SENSOR_COUNT } from '../features/profile/data/profile'
+import { USER_PROFILE } from '../features/profile/data/profile'
 import { ProfileHeader }   from '../features/profile/components/ProfileHeader'
-import { StatsRow }        from '../features/profile/components/StatsRow'
 import { SettingsSection } from '../features/profile/components/SettingsSection'
 import { SettingsRow }     from '../features/profile/components/SettingsRow'
+import { useAuth }         from '../features/auth/context/AuthContext'
 
 export function ProfilePage() {
+  const { logout } = useAuth()
+
   const [prefs, setPrefs] = useState({
     criticalAlerts: true,
     dailyReports:   false,
@@ -29,7 +31,7 @@ export function ProfilePage() {
         initials={USER_PROFILE.initials}
       />
 
-      <StatsRow alertCount={ALERT_COUNT} sensorCount={SENSOR_COUNT} />
+      {/* <StatsRow alertCount={alertCount} sensorCount={sensorCount} /> */}
 
       <SettingsSection title="CONTA E SEGURANÇA">
         <SettingsRow icon={User}        label="Dados Pessoais"              variant="link" />
@@ -73,7 +75,7 @@ export function ProfilePage() {
       <SettingsSection>
         <SettingsRow icon={HelpCircle} label="Centro de Ajuda" variant="link" />
         <SettingsRow icon={Scale}      label="Termos de Uso"   variant="link"   />
-        <SettingsRow icon={LogOut}     label="Sair"            variant="danger" />
+        <SettingsRow icon={LogOut}     label="Sair"            variant="danger" onPress={logout} />
       </SettingsSection>
 
     </div>

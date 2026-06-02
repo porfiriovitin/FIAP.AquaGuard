@@ -1,9 +1,11 @@
 import { useEffect } from 'react'
 import { X, BarChart2, Battery, Signal } from 'lucide-react'
 import { motion } from 'framer-motion'
-import { SENSORS, SENSOR_DETAILS } from '../data/sensors'
+import { useSensors }      from '../hooks/useSensors'
+import { useSensorDetail } from '../hooks/useSensorDetail'
 import { STATUS_STYLE } from '../utils/sensorStatus'
 import { resolveTrendColor, formatTrend } from '../utils/trend'
+import { MapView } from '../../map/components/MapView'
 
 interface Props {
   sensorId: string
@@ -11,8 +13,9 @@ interface Props {
 }
 
 export function SensorDetailModal({ sensorId, onClose }: Props) {
-  const sensor = SENSORS.find(s => s.id === sensorId)
-  const detail = SENSOR_DETAILS[sensorId]
+  const { data: sensors = [] }       = useSensors()
+  const { data: detail, isLoading } = useSensorDetail(sensorId)
+  const sensor = sensors.find(s => s.id === sensorId)
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
@@ -24,7 +27,9 @@ export function SensorDetailModal({ sensorId, onClose }: Props) {
     }
   }, [onClose])
 
-  if (!sensor || !detail) return null
+  if (isLoading || !sensor || !detail) return null
+
+  const coords = detail.coords
 
   const style = STATUS_STYLE[sensor.status]
 
@@ -82,20 +87,14 @@ export function SensorDetailModal({ sensorId, onClose }: Props) {
           </span>
         </div>
 
-        {/* Map placeholder */}
-        <div className="mx-4 mb-5 h-36 bg-[var(--ink-100)] rounded-[8px] relative overflow-hidden">
-          <div className="absolute inset-0 m-auto size-3 rounded-full bg-[#00e5ff]" />
-          <div
-            className="absolute bottom-2 left-2 px-2 py-1 rounded"
-            style={{ backgroundColor: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(4px)' }}
-          >
-            <span
-              className="text-[11px]"
-              style={{ fontFamily: 'var(--font-mono)', color: '#00e5ff' }}
-            >
-              {detail.coordinates}
-            </span>
-          </div>
+        {/* Map */}
+        <div className="mx-4 mb-5 h-36 rounded-[8px] overflow-hidden">
+          <MapView
+            center={coords}
+            zoom={14}
+            points={[{ id: sensorId, lng: coords[0], lat: coords[1], color: style.barColor, size: 'md', pulse: sensor.status !== 'offline' }]}
+            className="w-full h-36"
+          />
         </div>
 
         {/* Hardware bento */}

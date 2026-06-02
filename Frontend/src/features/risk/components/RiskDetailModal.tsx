@@ -1,9 +1,12 @@
 import { useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { X, Clock, Droplet, CloudRain, AlertTriangle } from 'lucide-react'
-import { RISKS, RISK_DETAILS } from '../data/risks'
+import { useRisks }      from '../hooks/useRisks'
+import { useRiskDetail } from '../hooks/useRiskDetail'
 import { RISK_COLOR, RISK_LABEL_LONG, calculateFillPercent } from '../utils/riskStyle'
 import { formatTrend } from '../../sensor/utils/trend'
+import { MapView } from '../../map/components/MapView'
+import { getFloodLayerCallback } from '../../map/services/mapService'
 
 interface Props {
   riskId:  string
@@ -15,8 +18,9 @@ function fmt(n: number, fractionDigits = 2): string {
 }
 
 export function RiskDetailModal({ riskId, onClose }: Props) {
-  const risk   = RISKS.find(r => r.id === riskId)
-  const detail = RISK_DETAILS[riskId]
+  const { data: risks = [] }         = useRisks()
+  const { data: detail, isLoading } = useRiskDetail(riskId)
+  const risk = risks.find(r => r.id === riskId)
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
@@ -28,7 +32,7 @@ export function RiskDetailModal({ riskId, onClose }: Props) {
     }
   }, [onClose])
 
-  if (!risk || !detail) return null
+  if (isLoading || !risk || !detail) return null
 
   const color       = RISK_COLOR[risk.level]
   const fillPercent = calculateFillPercent(risk.currentLevel, risk.limitLevel)
@@ -95,12 +99,13 @@ export function RiskDetailModal({ riskId, onClose }: Props) {
         {/* Scrollable region — fills the remaining vertical space below the header */}
         <div className="flex-1 min-h-0 overflow-y-auto">
 
-        {/* Hero map placeholder */}
-        <div className="h-[210px] bg-[var(--ink-100)] relative overflow-hidden">
-          <div className="absolute inset-0 bg-[rgba(0,87,192,0.10)]" />
-          <div
-            className="absolute inset-0 m-auto size-4 rounded-full border-2 border-white"
-            style={{ backgroundColor: color }}
+        {/* Hero map */}
+        <div className="h-[210px] overflow-hidden bg-[var(--navy-900)]">
+          <MapView
+            center={detail.coords}
+            zoom={12}
+            onLoad={getFloodLayerCallback()}
+            className="w-full h-[210px]"
           />
         </div>
 
