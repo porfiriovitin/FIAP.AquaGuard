@@ -12,8 +12,8 @@ export function LoginForm() {
   const { login, status } = useAuth()
   const navigate = useNavigate()
 
-  const [email,        setEmail]        = useState('')
-  const [password,     setPassword]     = useState('')
+  const [email,        setEmail]        = useState('teste@email.com')
+  const [password,     setPassword]     = useState('1ag35v')
   const [showPassword, setShowPassword] = useState(false)
   const [emailError,   setEmailError]   = useState('')
   const [serverError,  setServerError]  = useState('')

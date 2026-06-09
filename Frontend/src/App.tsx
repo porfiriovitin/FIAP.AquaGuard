@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-route
 import { AnimatePresence, motion } from 'framer-motion'
 import { TopAppBar } from './shared/components/layout/TopAppBar'
 import { BottomNavBar } from './shared/components/layout/BottomNavBar'
-import { NAV_TABS, TAB_ORDER } from './shared/config/navTabs'
+import { TAB_ORDER } from './shared/config/navTabs'
 import { isUrgent } from './features/risk/data/risks'
 import { useRisks } from './features/risk/hooks/useRisks'
 import { HomePage } from './pages/HomePage'
@@ -16,6 +16,7 @@ import { SensorDetailModal } from './features/sensor/components/SensorDetailModa
 import { RiskDetailModal } from './features/risk/components/RiskDetailModal'
 import { AuthProvider } from './features/auth/context/AuthContext'
 import { ProtectedRoute } from './shared/components/auth/ProtectedRoute'
+import { RedirectToStaticLanding } from './shared/utils/RedirectToStaticLanding'
 
 const HEADER_HEIGHT = '65px'
 const NAV_HEIGHT    = '75px'
@@ -38,21 +39,6 @@ const pageVariants = {
     opacity: 0,
     transition: { duration: 0.18, ease: EASE_IN },
   }),
-}
-
-function PlaceholderPage() {
-  const location = useLocation()
-  const tab = NAV_TABS.find(t => t.path === location.pathname)
-  return (
-    <div className="flex items-center justify-center min-h-[40vh]">
-      <span
-        className="text-[13px] text-[var(--fg-subtle)]"
-        style={{ fontFamily: 'var(--font-sans)' }}
-      >
-        {tab?.label ?? 'Página'} em breve
-      </span>
-    </div>
-  )
 }
 
 function AppLayout() {
@@ -140,6 +126,7 @@ export default function App() {
         <Routes>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/" element={<Navigate to="/app" replace />} />
+          <Route path="/landingpage" element={<RedirectToStaticLanding />} />
           <Route
             path="/app/*"
             element={

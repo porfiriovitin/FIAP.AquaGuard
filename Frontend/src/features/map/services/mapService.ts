@@ -1,4 +1,4 @@
-import mapboxgl from 'mapbox-gl'
+
 import { addFloodMockLayers } from '../data/floodLayers'
 
 const MOCK = import.meta.env.VITE_MOCK_DATA === 'true'

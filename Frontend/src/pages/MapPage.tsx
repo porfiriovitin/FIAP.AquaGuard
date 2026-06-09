@@ -1,5 +1,4 @@
 import { useCallback } from 'react'
-import mapboxgl from 'mapbox-gl'
 import { MapView } from '../features/map/components/MapView'
 import { getFloodLayerCallback } from '../features/map/services/mapService'
 

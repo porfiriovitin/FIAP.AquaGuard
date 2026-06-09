@@ -7,6 +7,7 @@ export default defineConfig({
   server: {
     host: true,
     allowedHosts: true,
+    open: '/landingpage'
   },
   build: {
     rollupOptions: {

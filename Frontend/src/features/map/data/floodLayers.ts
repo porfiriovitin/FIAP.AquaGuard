@@ -1,4 +1,3 @@
-import mapboxgl from 'mapbox-gl'
 
 // Satellites are placed at 40–85% of the kernel radius away from center (~0.015–0.032°),
 // so the Gaussian kernels deform visibly without splitting into separate blobs.

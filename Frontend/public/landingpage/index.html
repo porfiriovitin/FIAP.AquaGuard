@@ -3,11 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AquaGuard — Previsão · Tecnologia · Prevenção</title>
+  <title>AquaGuard</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
   <link href="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.css" rel="stylesheet" />
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon.png" />
   <script src="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/lucide@0.453.0/dist/umd/lucide.min.js"></script>
 
@@ -1623,6 +1624,7 @@
       <a href="#simulation">Simulação <i data-lucide="chevron-right" style="width:18px;height:18px;"></i></a>
       <a href="#alerts">Defesa Civil <i data-lucide="chevron-right" style="width:18px;height:18px;"></i></a>
       <a href="#access">Acesso e planos <i data-lucide="chevron-right" style="width:18px;height:18px;"></i></a>
+      <a href="/login" style="color: var(--cyan-600);" >Plataforma <i data-lucide="chevron-right" style="width:18px;height:18px;"></i></a>
     </nav>
     <div class="menu-secondary">
       <div class="menu-sec-links">
@@ -1674,7 +1676,7 @@
 
     <div class="statement-inner">
       <p class="statement-text" id="statementText">AquaGuard usa satélites, clima, relevo e sensores para prever onde, quando e com qual intensidade a enchente pode acontecer.</p>
-      <a href="#simulation" class="btn-outline-light">
+      <a href="/" class="btn-outline-light">
         Ver a plataforma
         <i data-lucide="arrow-right" style="width:14px;height:14px;"></i>
       </a>
@@ -2576,7 +2578,7 @@
     /* ── Mapbox simulation map ───────────────────── */
     (function () {
       if (typeof mapboxgl === 'undefined') return;
-      mapboxgl.accessToken = 'pk.eyJ1IjoiZGFuaWVscmliZWlyb2RldiIsImEiOiJjbXBuNTVuYWkyYWlmMnNvbDIwYXpqd2w3In0.wdppNjzE3diMLa8cwu7EaQ';
+      mapboxgl.accessToken = '';
 
       const map = new mapboxgl.Map({
         container: 'simulationMap',
@@ -2594,6 +2596,7 @@
       let _rafPending = false;
       function updateMapZoom() {
         if (_rafPending) return;
+        if(mapmapboxgl.accessToken === '') return; // skip if token not set
         _rafPending = true;
         requestAnimationFrame(() => {
           _rafPending = false;
