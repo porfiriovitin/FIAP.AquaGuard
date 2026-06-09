@@ -163,10 +163,10 @@
     }
     .menu-nav {
       flex: 1;
-      padding: 32px 24px 16px;
+      padding: 28px 24px 16px;
       display: flex;
       flex-direction: column;
-      gap: 0;
+      gap: 6px;
     }
     .menu-nav a {
       display: flex;
@@ -174,19 +174,19 @@
       justify-content: space-between;
       font-family: var(--font-display);
       font-weight: 700;
-      font-size: clamp(30px, 8vw, 44px);
+      font-size: clamp(22px, 6.2vw, 34px);
       line-height: 1.15;
       color: var(--navy-900);
-      padding: 10px 0;
+      padding: 16px 0;
       border-bottom: 1px solid var(--ink-100);
-      letter-spacing: -0.02em;
+      letter-spacing: 0;
       transition: color 0.15s;
     }
     .menu-nav a:last-child { border-bottom: none; }
     .menu-nav a:hover { color: var(--cyan-600); }
     .menu-nav a svg { color: var(--ink-400); flex-shrink: 0; }
     .menu-secondary {
-      padding: 24px 24px 16px;
+      padding: 22px 24px 16px;
       display: flex;
       flex-direction: column;
       gap: 16px;
@@ -228,6 +228,15 @@
     }
     .menu-cta:hover { background: var(--navy-800); }
 
+    @media (min-width: 760px) {
+      .menu-nav {
+        padding-top: 44px;
+      }
+      .menu-nav a {
+        font-size: 30px;
+      }
+    }
+
     /* ─── Hero ───────────────────────────────────────────────── */
     .hero {
       position: relative;
@@ -262,6 +271,7 @@
       position: absolute;
       bottom: 0; left: 0; right: 0;
       padding: 0 24px 44px;
+      max-width: 760px;
     }
     .hero-eyebrow {
       font-family: var(--font-sans);
@@ -286,38 +296,82 @@
       font-style: italic;
       color: var(--cyan-300);
     }
+    .hero-copy {
+      max-width: 34rem;
+      color: rgba(255,255,255,0.72);
+      font-size: 15px;
+      line-height: 1.6;
+      margin: -18px 0 24px;
+      text-wrap: pretty;
+    }
+    .hero-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      width: fit-content;
+      max-width: 100%;
+      margin-bottom: 18px;
+      padding: 9px 12px;
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: var(--radius-pill);
+      background: rgba(6,26,51,0.48);
+      color: rgba(255,255,255,0.82);
+      backdrop-filter: blur(8px);
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .hero-status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--risk-moderate);
+      box-shadow: 0 0 0 4px rgba(241,181,10,0.14);
+      animation: pulse-dot 2s ease-in-out infinite;
+      flex-shrink: 0;
+    }
     .hero-actions {
       display: flex;
       align-items: center;
-      gap: 20px;
+      gap: 14px;
     }
-    .btn-play {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.12);
-      border: 1px solid rgba(255,255,255,0.25);
+    .hero-link {
       display: flex;
       align-items: center;
       justify-content: center;
-      color: var(--white);
-      flex-shrink: 0;
-      backdrop-filter: blur(4px);
-      transition: background 0.2s;
-    }
-    .btn-play:hover { background: rgba(255,255,255,0.2); }
-    .btn-play svg { margin-left: 2px; }
-    .hero-link {
+      gap: 8px;
+      min-height: 48px;
+      padding: 0 20px;
+      border-radius: var(--radius-md);
+      background: rgba(255,255,255,0.94);
+      color: var(--navy-900);
       font-size: 14px;
-      font-weight: 500;
-      color: rgba(255,255,255,0.85);
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      transition: color 0.2s;
+      font-weight: 700;
+      border: 1px solid rgba(255,255,255,0.62);
+      box-shadow: 0 10px 28px -18px rgba(0,0,0,0.45);
+      transition: transform 0.16s, background 0.16s;
     }
-    .hero-link:hover { color: var(--white); }
-    .hero-link svg { color: var(--cyan-400); }
+    .hero-link:hover {
+      background: var(--white);
+      transform: translateY(-1px);
+    }
+    .hero-link svg { color: var(--cyan-600); }
+    .hero-next {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      transform: translateY(1px);
+      height: 28px;
+      background: var(--white);
+      border-radius: 18px 18px 0 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      color: var(--cyan-600);
+    }
 
     /* ─── Statement ──────────────────────────────────────────── */
     .statement {
@@ -333,6 +387,11 @@
       text-align: left;
     }
     .statement > *:not(canvas) { position: relative; z-index: 1; }
+    .statement-inner {
+      width: 100%;
+      max-width: 1080px;
+      margin: 0 auto;
+    }
     .corner-mark {
       position: absolute;
       font-family: var(--font-sans);
@@ -366,6 +425,7 @@
     .btn-outline-light {
       display: inline-flex;
       align-items: center;
+      align-self: flex-start;
       gap: 8px;
       padding: 12px 20px;
       border: 1px solid rgba(255,255,255,0.55);
@@ -385,7 +445,7 @@
     /* ─── Pillars ────────────────────────────────────────────── */
     .pillars {
       background: var(--white);
-      padding: 56px 24px 0;
+      padding: 56px 24px 64px;
     }
     .section-eyebrow {
       font-family: var(--font-sans);
@@ -397,23 +457,45 @@
       margin-bottom: 32px;
     }
     .pillar-row {
-      display: grid;
-      grid-template-columns: 36px 1fr 20px;
-      align-items: start;
-      gap: 16px;
-      padding: 24px 0;
-      border-top: 1px solid var(--ink-200);
-      cursor: pointer;
-      transition: background 0.15s;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      min-height: 190px;
+      padding: 20px;
+      border: 1px solid var(--ink-200);
+      border-radius: var(--radius-md);
+      background:
+        linear-gradient(180deg, rgba(236,251,250,0.72), rgba(255,255,255,0) 58%),
+        var(--white);
+      box-shadow: 0 14px 34px -28px rgba(11,37,69,0.42);
+      cursor: default;
+      overflow: hidden;
     }
-    .pillar-row:last-child { border-bottom: 1px solid var(--ink-200); }
-    .pillar-row:hover { background: var(--ink-50); margin: 0 -24px; padding-left: 24px; padding-right: 24px; }
+    .pillar-row::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--cyan-500), var(--mint-400));
+    }
     .pillar-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: fit-content;
+      min-width: 38px;
+      height: 24px;
+      margin-bottom: 28px;
+      padding: 0 10px;
+      border-radius: var(--radius-pill);
+      background: var(--cyan-50);
+      border: 1px solid var(--cyan-100);
       font-family: var(--font-mono);
       font-size: 12px;
       font-weight: 500;
-      color: var(--ink-400);
-      padding-top: 3px;
+      color: var(--cyan-700);
       letter-spacing: 0.02em;
     }
     .pillar-body h3 {
@@ -423,16 +505,12 @@
       line-height: 1.2;
       letter-spacing: -0.02em;
       color: var(--navy-900);
-      margin-bottom: 6px;
+      margin-bottom: 10px;
     }
     .pillar-body p {
       font-size: 14px;
       line-height: 1.6;
       color: var(--ink-600);
-    }
-    .pillar-chevron {
-      color: var(--ink-400);
-      padding-top: 3px;
     }
     .pillars-bottom {
       padding: 40px 0 56px;
@@ -485,7 +563,7 @@
     /* ─── Feature section ────────────────────────────────────── */
     .feature {
       background: var(--navy-900);
-      padding: 64px 24px 0;
+      padding: 64px 24px 48px;
     }
     .feature h2 {
       font-family: var(--font-display);
@@ -525,6 +603,72 @@
       min-height: 240px;
       position: relative;
       overflow: hidden;
+    }
+    .sim-overlay {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      pointer-events: none;
+      z-index: 3;
+    }
+    .sim-overlay-right {
+      left: auto;
+      right: 14px;
+    }
+    .sim-card {
+      background: rgba(6,26,51,0.82);
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 8px;
+      padding: 8px 12px;
+    }
+    .sim-card-live {
+      border-color: rgba(32,191,200,0.2);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .sim-card-risk { border-color: rgba(214,58,58,0.3); }
+    .sim-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--cyan-400);
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+    .sim-label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: rgba(255,255,255,0.4);
+      margin-bottom: 4px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .sim-live-text {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--cyan-400);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .sim-value {
+      font-family: var(--font-mono);
+      font-size: 15px;
+      color: var(--white);
+      font-weight: 600;
+    }
+    .sim-value span {
+      font-size: 11px;
+      color: rgba(255,255,255,0.5);
+    }
+    .sim-risk {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--risk-critical);
+      font-weight: 600;
     }
     .feature-visual-label {
       font-family: var(--font-mono);
@@ -861,6 +1005,133 @@
       flex-wrap: wrap;
     }
 
+    /* ─── Access model ──────────────────────────────────────── */
+    .access {
+      background: var(--ink-50);
+      padding: 64px 24px;
+    }
+    .access-inner {
+      max-width: 1080px;
+      margin: 0 auto;
+    }
+    .access h2 {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: clamp(28px, 7vw, 46px);
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      color: var(--navy-900);
+      margin-bottom: 14px;
+      text-wrap: balance;
+    }
+    .access-sub {
+      max-width: 680px;
+      font-size: 15px;
+      line-height: 1.65;
+      color: var(--ink-600);
+      margin-bottom: 28px;
+      text-wrap: pretty;
+    }
+    .access-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+    .access-card {
+      position: relative;
+      background: var(--white);
+      border: 1px solid var(--ink-200);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      overflow: hidden;
+      box-shadow: 0 12px 32px -28px rgba(11,37,69,0.45);
+    }
+    .access-card-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 16px;
+    }
+    .access-card-head .access-label {
+      margin-bottom: 0;
+    }
+    .access-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-md);
+      background: var(--cyan-50);
+      color: var(--cyan-700);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex: 0 0 auto;
+    }
+    .access-card-premium .access-icon {
+      background: rgba(239,122,26,0.1);
+      color: var(--risk-high);
+    }
+    .access-card::before {
+      content: "";
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 3px;
+      background: var(--cyan-500);
+    }
+    .access-card-premium::before { background: var(--risk-high); }
+    .access-label {
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      margin-bottom: 18px;
+      padding: 6px 10px;
+      border-radius: var(--radius-pill);
+      background: var(--cyan-50);
+      color: var(--cyan-700);
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .access-card-premium .access-label {
+      background: rgba(239,122,26,0.1);
+      color: var(--risk-high);
+    }
+    .access-card h3 {
+      font-family: var(--font-display);
+      font-size: 21px;
+      line-height: 1.2;
+      color: var(--navy-900);
+      margin-bottom: 10px;
+    }
+    .access-card p {
+      color: var(--ink-600);
+      font-size: 14px;
+      line-height: 1.58;
+    }
+    .access-points {
+      display: grid;
+      gap: 8px;
+      margin-top: 18px;
+      list-style: none;
+    }
+    .access-points li {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--ink-600);
+      font-size: 13px;
+      line-height: 1.4;
+    }
+    .access-points i {
+      color: var(--cyan-600);
+      flex-shrink: 0;
+    }
+    .access-card-premium .access-points i {
+      color: var(--risk-high);
+    }
+
     /* ─── CTA ────────────────────────────────────────────────── */
     .cta-section {
       background: var(--navy-900);
@@ -885,7 +1156,9 @@
     .btn-primary {
       display: inline-flex;
       align-items: center;
+      justify-content: center;
       gap: 10px;
+      width: fit-content;
       background: var(--white);
       color: var(--navy-900);
       font-size: 15px;
@@ -914,6 +1187,7 @@
     .cta-actions {
       display: flex;
       flex-direction: column;
+      align-items: flex-start;
       gap: 8px;
     }
     /* decoração circular atrás do CTA */
@@ -984,6 +1258,263 @@
       transition: color 0.15s;
     }
     .footer-social a:hover { color: rgba(255,255,255,0.8); }
+
+    /* ─── Mobile refinement ─────────────────────────────────── */
+    @media (max-width: 639px) {
+      .nav { padding: 18px 20px; }
+      .nav.scrolled { padding: 14px 20px; }
+
+      .hero {
+        min-height: 620px;
+        height: 100svh;
+      }
+      .hero-scrim {
+        background: linear-gradient(
+          to top,
+          rgba(6,26,51,0.96) 0%,
+          rgba(6,26,51,0.76) 34%,
+          rgba(6,26,51,0.18) 68%,
+          transparent 100%
+        );
+      }
+      .hero-content {
+        padding: 0 20px 54px;
+      }
+      .hero h1 {
+        font-size: clamp(40px, 13vw, 56px);
+        margin-bottom: 26px;
+      }
+      .hero-copy {
+        font-size: 14px;
+        margin: -12px 0 20px;
+      }
+      .hero-status {
+        font-size: 9px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .hero-actions {
+        gap: 12px;
+      }
+      .hero-link {
+        width: 100%;
+        font-size: 14px;
+      }
+      .hero-next {
+        display: flex;
+      }
+
+      .statement {
+        min-height: 84svh;
+        padding: 88px 24px 92px;
+      }
+      .statement-text {
+        font-size: clamp(30px, 9vw, 42px);
+        line-height: 1.14;
+        margin-bottom: 32px;
+      }
+
+      .pillars {
+        padding: 50px 20px 58px;
+      }
+      .section-eyebrow {
+        margin-bottom: 20px;
+      }
+      .pillar-row {
+        padding: 18px 16px;
+        margin-bottom: 12px;
+        min-height: auto;
+      }
+      .pillar-num {
+        margin-bottom: 18px;
+      }
+      .pillar-body h3 {
+        font-size: 19px;
+      }
+      .pillar-body p {
+        font-size: 13px;
+        line-height: 1.5;
+      }
+      .pillars-bottom {
+        padding: 24px 0 44px;
+      }
+
+      .feature {
+        padding: 56px 20px 44px;
+      }
+      .feature h2,
+      .sensors h2,
+      .alerts h2,
+      .cta-section h2 {
+        letter-spacing: -0.02em;
+      }
+      .feature-body,
+      .sensors-sub,
+      .alerts-sub,
+      .access-sub {
+        font-size: 14px;
+        line-height: 1.58;
+      }
+      .text-link {
+        margin-bottom: 34px;
+      }
+      #featureVisual {
+        min-height: 72svh !important;
+        border-radius: 16px 16px 0 0;
+      }
+      #simulationMap {
+        height: 72svh !important;
+      }
+      .sim-overlay {
+        top: 12px;
+        left: 12px;
+        right: 12px;
+        flex-direction: row;
+        flex-wrap: wrap;
+      }
+      .sim-overlay-right {
+        top: auto;
+        left: 12px;
+        right: auto;
+        bottom: 12px;
+      }
+      .sim-card {
+        padding: 7px 10px;
+      }
+      .sim-card:not(.sim-card-live) {
+        display: none;
+      }
+
+      .sensors {
+        padding: 56px 20px 68px;
+      }
+      .sensors-sub {
+        margin-bottom: 42px;
+      }
+      .pipeline {
+        padding-left: 58px;
+      }
+      .pipeline-circle {
+        width: 44px;
+        height: 44px;
+        left: -58px;
+      }
+      .pipeline-node {
+        padding-bottom: 36px;
+      }
+
+      .alerts {
+        padding: 56px 20px 64px;
+        overflow-x: hidden;
+      }
+      .alerts-grid {
+        display: flex;
+        gap: 14px;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        scroll-padding-left: 0;
+        margin: 0;
+        padding: 0 0 12px;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior-inline: contain;
+      }
+      .alerts-grid::-webkit-scrollbar { display: none; }
+      .alert-card {
+        flex: 0 0 min(calc(100vw - 80px), 330px);
+        min-width: 0;
+        scroll-snap-align: start;
+        box-shadow: 0 10px 30px -22px rgba(11,37,69,0.38);
+      }
+      .alert-card-header {
+        padding: 10px 13px;
+      }
+      .alert-card-body {
+        padding: 14px;
+      }
+      .alert-stats {
+        grid-template-columns: 1fr 1fr;
+      }
+      .alert-stats div:nth-child(3) {
+        display: none;
+      }
+
+      .access {
+        padding: 56px 20px 62px;
+      }
+
+      .cta-section {
+        padding: 70px 20px 78px;
+      }
+      .cta-actions .btn-primary {
+        width: 100%;
+        justify-content: center;
+      }
+      .footer {
+        padding: 36px 20px 30px;
+      }
+      .footer-bottom {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 18px;
+      }
+    }
+
+    @media (min-width: 760px) {
+      .hero-content,
+      .feature > .section-eyebrow,
+      .feature > h2,
+      .feature > .feature-body,
+      .feature > .text-link,
+      .sensors > *:not(.sensors-bg),
+      .alerts > *:not(.alerts-grid),
+      .alerts-grid,
+      .cta-section > *:not(canvas):not(.cta-glow):not(.corner-mark),
+      .footer > * {
+        max-width: 1080px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      .pillars {
+        max-width: 1080px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      .pillars {
+        padding-left: 40px;
+        padding-right: 40px;
+      }
+      .pillars {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 18px;
+      }
+      .pillars .section-eyebrow {
+        grid-column: 1 / -1;
+        width: 100%;
+      }
+      .feature,
+      .sensors,
+      .alerts,
+      .cta-section,
+      .footer {
+        padding-left: 40px;
+        padding-right: 40px;
+      }
+      .feature-visual {
+        max-width: 1180px;
+        margin-left: auto;
+        margin-right: auto;
+        border-radius: 16px;
+      }
+      .access-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+      }
+      .cta-actions .btn-primary {
+        width: auto;
+        min-width: 280px;
+      }
+    }
 
     /* ─── Tweaks panel ───────────────────────────────────────── */
     .tweaks-panel {
@@ -1067,7 +1598,7 @@
 
   <!-- ── Nav ──────────────────────────────────────────────── -->
   <nav class="nav" id="nav">
-    <a href="#" class="nav-brand">
+    <a href="#hero" class="nav-brand">
       <img src="assets/logo-mark.png" alt="AquaGuard" />
       <span class="nav-wordmark">AQUAGUARD</span>
     </a>
@@ -1080,34 +1611,34 @@
   <!-- ── Menu overlay ──────────────────────────────────────── -->
   <div class="menu-overlay" id="menuOverlay" role="dialog" aria-label="Menu de navegação">
     <div class="menu-header">
-      <a href="#" class="nav-brand">
+      <a href="#hero" class="nav-brand">
         <img src="assets/logo-mark.png" alt="AquaGuard" />
         <span class="nav-wordmark">AQUAGUARD</span>
       </a>
       <button class="menu-close" id="menuClose" aria-label="Fechar menu">✕</button>
     </div>
     <nav class="menu-nav" aria-label="Navegação principal">
-      <a href="#">Produto <i data-lucide="chevron-down" style="width:18px;height:18px;"></i></a>
-      <a href="#">Tecnologia</a>
-      <a href="#">Simulação</a>
-      <a href="#">Defesa Civil</a>
-      <a href="#">Casos de uso</a>
+      <a href="#statement">Produto <i data-lucide="chevron-right" style="width:18px;height:18px;"></i></a>
+      <a href="#sensors">Tecnologia <i data-lucide="chevron-right" style="width:18px;height:18px;"></i></a>
+      <a href="#simulation">Simulação <i data-lucide="chevron-right" style="width:18px;height:18px;"></i></a>
+      <a href="#alerts">Defesa Civil <i data-lucide="chevron-right" style="width:18px;height:18px;"></i></a>
+      <a href="#access">Acesso e planos <i data-lucide="chevron-right" style="width:18px;height:18px;"></i></a>
     </nav>
     <div class="menu-secondary">
       <div class="menu-sec-links">
-        <a href="#">Documentação</a>
-        <a href="#">Equipe</a>
-        <a href="#">Contato</a>
-        <a href="#">Blog</a>
+        <a href="#access">Acesso</a>
+        <a href="#sensors">Metodologia</a>
+        <a href="mailto:contato@aquaguard.com?subject=Solicitar%20demonstra%C3%A7%C3%A3o%20AquaGuard">Contato</a>
+        <a href="#cta">Demonstração</a>
       </div>
       <div class="menu-social">
-        <a href="#" aria-label="LinkedIn"><i data-lucide="linkedin" style="width:18px;height:18px;"></i></a>
-        <a href="#" aria-label="Twitter / X"><i data-lucide="twitter" style="width:18px;height:18px;"></i></a>
-        <a href="#" aria-label="Instagram"><i data-lucide="instagram" style="width:18px;height:18px;"></i></a>
-        <a href="#" aria-label="YouTube"><i data-lucide="youtube" style="width:18px;height:18px;"></i></a>
+        <a href="https://www.linkedin.com/" target="_blank" rel="noreferrer" aria-label="LinkedIn"><i data-lucide="linkedin" style="width:18px;height:18px;"></i></a>
+        <a href="https://x.com/" target="_blank" rel="noreferrer" aria-label="Twitter / X"><i data-lucide="twitter" style="width:18px;height:18px;"></i></a>
+        <a href="https://www.instagram.com/" target="_blank" rel="noreferrer" aria-label="Instagram"><i data-lucide="instagram" style="width:18px;height:18px;"></i></a>
+        <a href="https://www.youtube.com/" target="_blank" rel="noreferrer" aria-label="YouTube"><i data-lucide="youtube" style="width:18px;height:18px;"></i></a>
       </div>
     </div>
-    <a href="#" class="menu-cta">Solicitar demonstração</a>
+    <a href="#cta" class="menu-cta">Solicitar demonstração</a>
   </div>
 
   <!-- ── Hero ──────────────────────────────────────────────── -->
@@ -1119,16 +1650,21 @@
       <div class="hero-scrim"></div>
     </div>
     <div class="hero-content">
+      <div class="hero-status">
+        <span class="hero-status-dot"></span>
+        Risco moderado · Rio Tietê · 42 mm
+      </div>
       <h1>Antecipe a próxima <em>enchente.</em></h1>
+      <p class="hero-copy">Veja o risco da sua região antes que a água chegue à rua.</p>
       <div class="hero-actions">
-        <button class="btn-play" aria-label="Ver demonstração">
-          <i data-lucide="play" style="width:18px;height:18px;"></i>
-        </button>
-        <a href="#" class="hero-link">
+        <a href="#simulation" class="hero-link">
           <i data-lucide="chevron-right" style="width:16px;height:16px;"></i>
-          Ver demonstração completa
+          Ver simulação
         </a>
       </div>
+    </div>
+    <div class="hero-next" aria-hidden="true">
+      <i data-lucide="chevron-down" style="width:18px;height:18px;"></i>
     </div>
   </section>
 
@@ -1136,74 +1672,63 @@
   <section class="statement" id="statement" style="background-color: rgb(6, 26, 51); text-align: left">
     <canvas id="rainCanvas" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;"></canvas>
 
-    <p class="statement-text" id="statementText">AquaGuard monitora bacias hidrográficas em tempo real, simulando enchentes antes que aconteçam.</p>
-    <a href="#" class="btn-outline-light">
-      Ver a plataforma
-      <i data-lucide="arrow-right" style="width:14px;height:14px;"></i>
-    </a>
+    <div class="statement-inner">
+      <p class="statement-text" id="statementText">AquaGuard usa satélites, clima, relevo e sensores para prever onde, quando e com qual intensidade a enchente pode acontecer.</p>
+      <a href="#simulation" class="btn-outline-light">
+        Ver a plataforma
+        <i data-lucide="arrow-right" style="width:14px;height:14px;"></i>
+      </a>
+    </div>
   </section>
 
   <!-- ── Pillars ────────────────────────────────────────────── -->
-  <section class="pillars">
+  <section class="pillars" id="pillars">
     <p class="section-eyebrow">Três pilares</p>
     <div class="pillar-row">
       <span class="pillar-num">01</span>
       <div class="pillar-body">
         <h3>Previsão</h3>
-        <p>Risco de chuva, nível dos rios e escoamento urbano com janela de 6 a 72 horas.</p>
+        <p>Dados climáticos, rios e terreno indicam onde o risco está crescendo.</p>
       </div>
-      <div class="pillar-chevron"><i data-lucide="chevron-right" style="width:18px;height:18px;"></i></div>
     </div>
     <div class="pillar-row">
       <span class="pillar-num">02</span>
       <div class="pillar-body">
         <h3>Tecnologia</h3>
-        <p>Rede de sensores IoT, imagens de satélite e modelos hidrológicos integrados em tempo real.</p>
+        <p>Satélites, sensores IoT e modelos hidrológicos cruzam dados em tempo real.</p>
       </div>
-      <div class="pillar-chevron"><i data-lucide="chevron-right" style="width:18px;height:18px;"></i></div>
     </div>
     <div class="pillar-row">
       <span class="pillar-num">03</span>
       <div class="pillar-body">
         <h3>Prevenção</h3>
-        <p>Alertas em tempo real, planos de evacuação e suporte à decisão para a Defesa Civil.</p>
+        <p>Alertas confiáveis ajudam a Defesa Civil, empresas e produtores a agir antes do dano.</p>
       </div>
-      <div class="pillar-chevron"><i data-lucide="chevron-right" style="width:18px;height:18px;"></i></div>
-    </div>
-    <div class="pillars-bottom">
-      <a href="#" class="text-link">
-        <i data-lucide="chevron-right" style="width:15px;height:15px;"></i>
-        <span style="color: rgb(11, 37, 69);">Conheça a metodologia</span>
-      </a>
     </div>
   </section>
 
 
   <!-- ── Feature: Simulation ────────────────────────────────── -->
-  <section class="feature">
+  <section class="feature" id="simulation">
     <p class="section-eyebrow">Simulação hidrológica</p>
     <h2>Veja a enchente antes que ela chegue.</h2>
-    <p class="feature-body">O motor de simulação da AquaGuard processa dados de precipitação, topografia e uso do solo para projetar o avanço da inundação hora a hora.</p>
-    <a href="#" class="text-link">
-      <i data-lucide="chevron-right" style="width:15px;height:15px;"></i>
-      Explorar simulações
-    </a>
+    <p class="feature-body">O mapa interativo projeta o avanço da inundação e classifica cada região em risco baixo, moderado, alto ou crítico nas próximas horas ou dias.</p>
     <div class="feature-visual" id="featureVisual" style="min-height:100svh; padding:0; position:relative;">
       <div id="simulationMap" style="width:100%; height:100svh; border-radius:16px 16px 0 0; touch-action: pan-y;"></div>
-      <div style="position:absolute; top:14px; left:14px; display:flex; flex-direction:column; gap:8px; pointer-events:none;">
-        <div style="background:rgba(6,26,51,0.82); backdrop-filter:blur(6px); border:1px solid rgba(32,191,200,0.2); border-radius:8px; padding:8px 12px; display:flex; align-items:center; gap:8px;">
-          <div style="width:7px;height:7px;border-radius:50%;background:var(--cyan-400);animation:pulse-dot 2s ease-in-out infinite;"></div>
-          <span style="font-family:var(--font-mono);font-size:10px;color:var(--cyan-400);letter-spacing:0.08em;text-transform:uppercase;">Simulação ativa · T+6h</span>
+      <div class="sim-overlay">
+        <div class="sim-card sim-card-live">
+          <div class="sim-dot"></div>
+          <span class="sim-live-text">Simulação ativa · T+6h</span>
         </div>
-        <div style="background:rgba(6,26,51,0.82); backdrop-filter:blur(6px); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:8px 12px;">
-          <p style="font-family:var(--font-mono);font-size:10px;color:rgba(255,255,255,0.4);margin-bottom:4px;letter-spacing:0.06em;">PRECIPITAÇÃO ACUM.</p>
-          <p style="font-family:var(--font-mono);font-size:15px;color:var(--white);font-weight:600;">48,2 <span style="font-size:11px;color:rgba(255,255,255,0.5);">mm/6h</span></p>
+        <div class="sim-card">
+          <p class="sim-label">Precipitação acum.</p>
+          <p class="sim-value">48,2 <span>mm/6h</span></p>
         </div>
       </div>
-      <div style="position:absolute; top:14px; right:14px; pointer-events:none;">
-        <div style="background:rgba(6,26,51,0.82); backdrop-filter:blur(6px); border:1px solid rgba(214,58,58,0.3); border-radius:8px; padding:8px 12px;">
-          <p style="font-family:var(--font-mono);font-size:10px;color:rgba(255,255,255,0.4);margin-bottom:4px;letter-spacing:0.06em;">RISCO PREVISTO</p>
-          <p style="font-family:var(--font-mono);font-size:13px;color:var(--risk-critical);font-weight:600;">CRÍTICO</p>
+      <div class="sim-overlay sim-overlay-right">
+        <div class="sim-card sim-card-risk">
+          <p class="sim-label">Risco previsto</p>
+          <p class="sim-risk">CRÍTICO</p>
         </div>
       </div>
     </div>
@@ -1215,10 +1740,10 @@
       <canvas id="sensorsCanvas"></canvas>
       <div class="sensors-scrim"></div>
     </div>
-    <p class="section-eyebrow">Sensores de informação</p>
-    <h2>Sensores em campo, dados na nuvem.</h2>
+    <p class="section-eyebrow">Tecnologia espacial</p>
+    <h2>Satélites no céu, sensores em campo.</h2>
     <p class="sensors-sub">
-      A rede AquaGuard opera em três camadas integradas. Satélites observam o solo e a atmosfera, sensores IoT medem em campo a cada 60 segundos, e a rede celular entrega os dados à plataforma em tempo real.
+      Imagens de radar acompanham áreas alagadas, rios e regiões de difícil acesso mesmo durante chuvas intensas ou sob nuvens densas.
     </p>
 
     <div class="pipeline" id="pipeline">
@@ -1231,7 +1756,7 @@
         <div class="pipeline-info">
           <p class="pipeline-label">01 · Satélite</p>
           <h4>Observação orbital</h4>
-          <p>Imagens em tempo real identificam saturação do solo, cobertura de nuvens e precipitação acumulada na região.</p>
+          <p>Radar orbital detecta expansão de áreas alagadas, corpos d'água e mudanças ambientais antes do desastre.</p>
         </div>
       </div>
 
@@ -1242,7 +1767,7 @@
         <div class="pipeline-info">
           <p class="pipeline-label">02 · Sensores</p>
           <h4>Telemetria em campo</h4>
-          <p>Dispositivos IoT's medem nível de rio, vazão, chuva e umidade do solo. Leituras a cada 60 segundos com energia solar e bateria redundante.</p>
+          <p>Dispositivos IoT medem nível de rio, vazão e chuva em locais estratégicos, refinando a previsão local.</p>
         </div>
       </div>
 
@@ -1253,18 +1778,17 @@
         <div class="pipeline-info">
           <p class="pipeline-label">03 · Celular</p>
           <h4>Conectividade em tempo real</h4>
-          <p>Visualize análise e receba alertas, tudo na palma da sua mão.</p>
+          <p>Dados públicos e medições próprias alimentam modelos preditivos para orientar decisões em tempo real.</p>
         </div>
       </div>
     </div>
   </section>
 
   <!-- ── Alerts preview ─────────────────────────────────────── -->
-  <section class="alerts">
+  <section class="alerts" id="alerts">
     <p class="section-eyebrow">Sistema de alertas</p>
     <h2>Alertas definidos para cada bacia.</h2>
-    <p class="alerts-sub">Notificações em diferentes canais, guidas pelas previsões do nosso motor, com tempo de ação estimado para cada situação.
-Sem mais surpresas. </p>
+    <p class="alerts-sub">Notificações guiadas por previsão, nível de risco e janela de ação para orientar equipes, moradores e áreas produtivas.</p>
 
     <div class="alerts-grid">
 
@@ -1426,29 +1950,54 @@ Sem mais surpresas. </p>
 
     </div><!-- /.alerts-grid -->
 
-    <div style="margin-top:28px;">
-      <a href="#" class="text-link">
-        <i data-lucide="chevron-right" style="width:15px;height:15px;"></i>
-        <span style="color: #0b2545;">Ver todos os alertas</span>
-      </a>
+  </section>
+
+  <!-- ── Access model ───────────────────────────────────────── -->
+  <section class="access" id="access">
+    <div class="access-inner">
+      <p class="section-eyebrow">Acesso e precisão</p>
+      <h2>Aberto para todos. Preciso para quem precisa agir.</h2>
+      <p class="access-sub">A informação geral fica aberta para a população. A precisão operacional entra como serviço para quem precisa decidir rápido.</p>
+      <div class="access-grid">
+        <article class="access-card">
+          <div class="access-card-head">
+            <span class="access-label">Consulta pública</span>
+            <span class="access-icon"><i data-lucide="map-pin" style="width:20px;height:20px;"></i></span>
+          </div>
+          <h3>Risco por localização</h3>
+          <p>Qualquer pessoa pode acessar a plataforma, selecionar sua região e visualizar uma previsão geral baseada em dados públicos de satélite e clima.</p>
+          <ul class="access-points">
+            <li><i data-lucide="check" style="width:14px;height:14px;"></i>Mapa por região</li>
+            <li><i data-lucide="check" style="width:14px;height:14px;"></i>Níveis baixo, moderado, alto e crítico</li>
+          </ul>
+        </article>
+        <article class="access-card access-card-premium">
+          <div class="access-card-head">
+            <span class="access-label">Monitoramento premium</span>
+            <span class="access-icon"><i data-lucide="radio-tower" style="width:20px;height:20px;"></i></span>
+          </div>
+          <h3>Sensores e alertas avançados</h3>
+          <p>Prefeituras, empresas e produtores podem contratar sensores próprios, análises mais precisas e alertas operacionais por assinatura.</p>
+          <ul class="access-points">
+            <li><i data-lucide="check" style="width:14px;height:14px;"></i>Rede própria em rios e pontos críticos</li>
+            <li><i data-lucide="check" style="width:14px;height:14px;"></i>Alertas para Defesa Civil, empresas e produtores</li>
+          </ul>
+        </article>
+      </div>
     </div>
   </section>
 
   <!-- ── CTA ───────────────────────────────────────────────── -->
-  <section class="cta-section">
+  <section class="cta-section" id="cta">
     <canvas id="ctaCanvas" style="position:absolute;top:0;left:0;width:100%;height:50%;pointer-events:none;z-index:0;"></canvas>
     <div class="cta-glow"></div>
     <span class="corner-mark corner-tl" style="color:rgba(255,255,255,0.15);">+</span>
     <span class="corner-mark corner-br" style="color:rgba(255,255,255,0.15);">+</span>
-    <h2>Leve o AquaGuard para sua <em>bacia.</em></h2>
+    <h2>Do espaço para a terra, transforme dados em <em>prevenção.</em></h2>
     <div class="cta-actions">
-      <a href="#" class="btn-primary">
+      <a href="mailto:contato@aquaguard.com?subject=Solicitar%20demonstra%C3%A7%C3%A3o%20AquaGuard" class="btn-primary">
         Solicitar demonstração
         <i data-lucide="arrow-right" style="width:15px;height:15px;"></i>
-      </a>
-      <a href="#" class="btn-ghost-light">
-        <i data-lucide="chevron-right" style="width:14px;height:14px;"></i>
-        Falar com a equipe
       </a>
     </div>
   </section>
@@ -1460,21 +2009,21 @@ Sem mais surpresas. </p>
       <span class="footer-wordmark">AQUAGUARD</span>
     </div>
     <nav class="footer-links">
-      <a href="#">Produto</a>
-      <a href="#">Tecnologia</a>
-      <a href="#">Simulação</a>
-      <a href="#">Defesa Civil</a>
-      <a href="#" style="color: rgb(255, 255, 255)">Documentação</a>
-      <a href="#">API</a>
-      <a href="#">Privacidade</a>
-      <a href="#">Contato</a>
+      <a href="#statement">Produto</a>
+      <a href="#sensors">Tecnologia</a>
+      <a href="#simulation">Simulação</a>
+      <a href="#alerts">Defesa Civil</a>
+      <a href="#access">Acesso</a>
+      <a href="#cta">Demonstração</a>
+      <a href="#access">Planos</a>
+      <a href="mailto:contato@aquaguard.com?subject=Contato%20AquaGuard">Contato</a>
     </nav>
     <div class="footer-bottom">
       <span class="footer-copy">© 2026 AquaGuard. Todos os direitos reservados.</span>
       <div class="footer-social">
-        <a href="#" aria-label="LinkedIn"><i data-lucide="linkedin" style="width:15px;height:15px;"></i></a>
-        <a href="#" aria-label="Instagram"><i data-lucide="instagram" style="width:15px;height:15px;"></i></a>
-        <a href="#" aria-label="YouTube"><i data-lucide="youtube" style="width:15px;height:15px;"></i></a>
+        <a href="https://www.linkedin.com/" target="_blank" rel="noreferrer" aria-label="LinkedIn"><i data-lucide="linkedin" style="width:15px;height:15px;"></i></a>
+        <a href="https://www.instagram.com/" target="_blank" rel="noreferrer" aria-label="Instagram"><i data-lucide="instagram" style="width:15px;height:15px;"></i></a>
+        <a href="https://www.youtube.com/" target="_blank" rel="noreferrer" aria-label="YouTube"><i data-lucide="youtube" style="width:15px;height:15px;"></i></a>
       </div>
     </div>
   </footer>
@@ -1723,6 +2272,22 @@ Sem mais surpresas. </p>
     menuClose.addEventListener('click', closeMenu);
     menuOverlay.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMenu));
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu(); });
+
+    /* ── Internal section links ─────────────────── */
+    document.querySelectorAll('a[href^="#"]').forEach(link => {
+      link.addEventListener('click', event => {
+        const hash = link.getAttribute('href');
+        if (!hash || hash === '#') return;
+
+        const target = document.querySelector(hash);
+        if (!target) return;
+
+        event.preventDefault();
+        closeMenu();
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        history.pushState(null, '', hash);
+      });
+    });
 
     /* ── Hero canvas (disabled — using video instead) ─────────────────────────────── */
     if (false) {
